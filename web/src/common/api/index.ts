@@ -20,9 +20,9 @@ const headers = {
   "ngrok-skip-browser-warning": "69420", // ignora aviso do ngrok se usado
 };
 
-// Cria instância do Axios com base na URL da API local
+// Cliente API (Axios)
 const Api = axios.create({
-  baseURL: process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:1337", // usa variável de ambiente ou localhost
+  baseURL: process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001",
   headers,
 });
 

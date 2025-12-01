@@ -8,6 +8,16 @@
 import api from "./api.service";
 
 /**
+ * Base global da API (Render ou Localhost)
+ * — Coloquei no topo para evitar erros de variável não encontrada
+ */
+const API_BASE =
+  process.env.NEXT_PUBLIC_API_URL ||
+  (typeof window !== "undefined"
+    ? window.location.origin
+    : "http://localhost:3001");
+
+/**
  * Interface para resposta do QR Code PIX
  * Retornado pela API após gerar pagamento
  */
@@ -75,21 +85,15 @@ class PaymentService {
         email: customerEmail,
       };
 
-      // Fazer requisição POST para API
-      const response = await fetch(
-        `${
-          process.env.NEXT_PUBLIC_API_URL ||
-          (typeof window !== "undefined" ? window.location.origin : "")
-        }/payment/pix`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify(payload),
-        }
-      );
+      // Fazer requisição POST para API PIX
+      const response = await fetch(`${API_BASE}/payment/pix`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(payload),
+      });
 
       // Validar resposta
       if (!response.ok) {
@@ -127,10 +131,7 @@ class PaymentService {
 
       // Requisição para verificar status
       const response = await fetch(
-        `${
-          process.env.NEXT_PUBLIC_API_URL ||
-          (typeof window !== "undefined" ? window.location.origin : "")
-        }/payment/find-one/${paymentId}`,
+        `${API_BASE}/payment/find-one/${paymentId}`,
         {
           method: "GET",
           headers: {
