@@ -20,7 +20,7 @@ const config = new DataSource({
   port: Number(process.env.DB_PORT), // 5432
   username: process.env.DB_USERNAME, // postgres
   password: process.env.DB_PASSWORD, // Pizza@Massa@Nostra
-  database: process.env.DB_DATABASE, // postgres
+  database: process.env.DB_NAME, // postgres
   // TypeORM vai buscar todos os arquivos .entity.ts ou .entity.js
   entities: [__dirname + '/**/*.entity{.ts,.js}'],
 

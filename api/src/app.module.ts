@@ -53,7 +53,7 @@ config();
       port: parseInt(process.env.DB_PORT || '6543'), // IMPORTANTE: Supabase usa 6543 no pooler
       username: process.env.DB_USERNAME, // 'postgres.immtupjumavgpefcvzpg'
       password: process.env.DB_PASSWORD,
-      database: process.env.DB_DATABASE || 'postgres',
+      database: process.env.DB_NAME || 'postgres',
 
       // Carrega todas entidades automaticamente
       entities: [__dirname + '/**/*.entity{.ts,.js}'],
