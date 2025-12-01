@@ -1,8 +1,8 @@
 // ============================================
 // API - PIZZARIA MASSA NOSTRA
 // ============================================
-// Este é o arquivo principal que inicializa a aplicação NestJS
-// Configura porta, CORS, validação, filtros de erro, Swagger...
+// Arquivo principal da aplicação NestJS
+// Configura CORS, validação, filtros, Swagger...
 // ============================================
 
 import { NestFactory } from '@nestjs/core';
@@ -17,47 +17,51 @@ config();
 // Importa Express para configurações avançadas
 import { json, urlencoded } from 'express';
 
-// Importa Swagger para documentação da API
+// Swagger
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 
 async function bootstrap() {
   // ============================================
-  // CRIA INSTÂNCIA DA APLICAÇÃO NESTJS
+  // CRIA INSTÂNCIA DO NEST
   // ============================================
   const app = await NestFactory.create(AppModule);
 
   // ============================================
-  // CONFIGURAÇÃO DE TAMANHO DE PAYLOAD
+  // LIMITES DE PAYLOAD
   // ============================================
-  // Permite envio de arquivos grandes (até 10MB)
-  // Necessário para upload de imagens de produtos
   app.use(json({ limit: '10mb' }));
   app.use(urlencoded({ extended: true, limit: '10mb' }));
 
-  // Valida DTOs automaticamente em todas as rotas
+  // ============================================
+  // VALIDAÇÃO GLOBAL (DTOs)
+  // ============================================
   app.useGlobalPipes(new AppValidationPipe());
 
   // ============================================
-  // FILTRO DE ERROS GLOBAL
+  // FILTRO GLOBAL DE ERROS
   // ============================================
-  // Captura e formata erros de forma padronizada
   app.useGlobalFilters(new ApiErrorFilter());
 
-  // Permite que o frontend acesse a API e preflight requests
+  // ============================================
+  // CORS — AJUSTADO PARA PRODUÇÃO NO RENDER
+  // ============================================
   app.enableCors({
     origin: [
-      'http://localhost:3000', // Frontend local
+      'http://localhost:3000', // Front local
       'http://localhost:3001', // API local
-      process.env.FRONTEND_URL_PRODUCTION, // Frontend produção (quando subir)
-    ].filter(Boolean), // Remove valores undefined
-    credentials: true, // Permite cookies
-    methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+      'http://localhost:5173', // Front Vite
+      'https://massa-nostra-cco1b.onrender.com', // FRONT PRODUÇÃO
+      process.env.FRONTEND_URL_PRODUCTION, // Caso exista variável no .env
+    ].filter(Boolean), // remove indefinidos
+
+    methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization'],
+    credentials: true,
     preflightContinue: false,
   });
 
   // ============================================
-  // SWAGGER DOCUMENTATION
+  // SWAGGER
   // ============================================
   const swaggerConfig = new DocumentBuilder()
     .setTitle('Pizzaria Massa Nostra API')
@@ -67,7 +71,7 @@ async function bootstrap() {
     .addTag('categories', 'Categorias de produtos')
     .addTag('products', 'Produtos do cardápio')
     .addTag('orders', 'Pedidos')
-    .addTag('addresses', 'Endereços de entrega')
+    .addTag('addresses', 'Endereços')
     .addBearerAuth()
     .build();
 
@@ -75,26 +79,24 @@ async function bootstrap() {
   SwaggerModule.setup('api-docs', app, document);
 
   // ============================================
-  // INICIALIZAÇÃO DO SERVIDOR
+  // INICIA SERVIDOR
   // ============================================
-  const port = process.env.PORT || 3001; // Porta padrão 3001
+  const port = process.env.PORT || 3001;
 
   console.log('\nPizzaria Massa Nostra API');
   console.log('═══════════════════════════════════');
   console.log(`Servidor iniciando na porta ${port}...`);
-  console.log(`URL: http://localhost:${port}`);
-  console.log(`Swagger Docs: http://localhost:${port}/api-docs`);
+  console.log(`URL local: http://localhost:${port}`);
+  console.log(`Swagger:   http://localhost:${port}/api-docs`);
   console.log(`Ambiente: ${process.env.NODE_ENV || 'development'}`);
-  console.log('Banco: Supabase (PostgreSQL)');
   console.log('═══════════════════════════════════\n');
 
-  // Inicia o servidor
   await app.listen(port);
 
   console.log('API rodando com sucesso!\n');
 }
 
 // ============================================
-// EXECUTA FUNÇÃO BOOTSTRAP
+// EXECUTA A APLICAÇÃO
 // ============================================
 bootstrap();
