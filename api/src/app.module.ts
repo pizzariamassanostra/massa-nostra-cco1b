@@ -49,23 +49,26 @@ config();
       type: 'postgres',
 
       // CONECTA NO SUPABASE (POOLER)
-      host: process.env.DB_HOST, // aws-1-sa-east-1.pooler.supabase.com
-      port: Number(process.env.DB_PORT), // 6543
-      username: process.env.DB_USERNAME, // postgres.immtupjumavgpefcvzpg
-      password: process.env.DB_PASSWORD, // a senha que você criou
-      database: process.env.DB_DATABASE, // postgres
+      host: process.env.DB_HOST, // 'aws-1-sa-east-1.pooler.supabase.com'
+      port: parseInt(process.env.DB_PORT || '6543'), // IMPORTANTE: Supabase usa 6543 no pooler
+      username: process.env.DB_USERNAME, // 'postgres.immtupjumavgpefcvzpg'
+      password: process.env.DB_PASSWORD,
+      database: process.env.DB_DATABASE || 'postgres',
 
       // Carrega todas entidades automaticamente
       entities: [__dirname + '/**/*.entity{.ts,.js}'],
 
       // IMPORTANTE:
       // Nunca use synchronize em produção
-      synchronize: process.env.NODE_ENV === 'development',
+      synchronize: false, // NUNCA use true em produção
 
       logging: process.env.NODE_ENV === 'development',
 
       // Render + Supabase EXIGEM SSL
-      ssl: { rejectUnauthorized: false },
+      ssl: {
+        rejectUnauthorized: false,
+        ca: process.env.SUPABASE_SSL_CERT, // Se precisar de certificado específico
+      },
     }),
 
     // ============================================
