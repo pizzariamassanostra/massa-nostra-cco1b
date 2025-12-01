@@ -1,9 +1,15 @@
+// ============================================
+// MÓDULO PRINCIPAL DA APLICAÇÃO
+// ============================================
 import { Module } from '@nestjs/common';
+import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule } from '@nestjs/config';
 import { ScheduleModule } from '@nestjs/schedule';
-import { TypeOrmModule } from '@nestjs/typeorm';
+import { config } from 'dotenv';
 
-// MÓDULOS DA APLICAÇÃO
+// ============================================
+// IMPORTAR MÓDULOS DA APLICAÇÃO
+// ============================================
 import { AuthModule } from './modules/auth/auth.module';
 import { AdminUserModule } from './modules/admin-user/admin-user.module';
 import { CommonUserModule } from './modules/common-user/common-user.module';
@@ -19,8 +25,13 @@ import { RbacModule } from './modules/rbac/rbac.module';
 import { SupplierModule } from './modules/supplier/supplier.module';
 import { IngredientModule } from './modules/ingredient/ingredient.module';
 
+config(); // Carrega .env manualmente
+
 @Module({
   imports: [
+    // ============================================
+    // CONFIGURAÇÃO GLOBAL DO .ENV
+    // ============================================
     ConfigModule.forRoot({
       isGlobal: true,
       envFilePath: '.env',
@@ -28,23 +39,33 @@ import { IngredientModule } from './modules/ingredient/ingredient.module';
 
     ScheduleModule.forRoot(),
 
+    // ============================================
+    // TYPEORM + SUPABASE
+    // ============================================
     TypeOrmModule.forRoot({
       type: 'postgres',
       host: process.env.DB_HOST,
-      port: Number(process.env.DB_PORT || 5432),
+      port: Number(process.env.DB_PORT),
       username: process.env.DB_USERNAME,
       password: process.env.DB_PASSWORD,
       database: process.env.DB_DATABASE,
 
+      entities: [__dirname + '/**/*.entity{.ts,.js}'],
+
+      // NUNCA usar synchronize em produção
+      synchronize: process.env.NODE_ENV === 'development',
+
+      logging: process.env.NODE_ENV === 'development',
+
+      // OBRIGATÓRIO NO SUPABASE
       ssl: {
         rejectUnauthorized: false,
       },
-
-      entities: [__dirname + '/**/*.entity{.ts,.js}'],
-      synchronize: process.env.NODE_ENV === 'development',
-      logging: process.env.NODE_ENV === 'development',
     }),
 
+    // ============================================
+    // MÓDULOS DA APLICAÇÃO
+    // ============================================
     AuthModule,
     CommonUserModule,
     AdminUserModule,
