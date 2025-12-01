@@ -25,7 +25,10 @@ import { RbacModule } from './modules/rbac/rbac.module';
 import { SupplierModule } from './modules/supplier/supplier.module';
 import { IngredientModule } from './modules/ingredient/ingredient.module';
 
-config(); // Carrega .env manualmente
+// ============================================
+// Carrega .env
+// ============================================
+config();
 
 @Module({
   imports: [
@@ -40,27 +43,29 @@ config(); // Carrega .env manualmente
     ScheduleModule.forRoot(),
 
     // ============================================
-    // TYPEORM + SUPABASE
+    // TYPEORM (PRODUÇÃO + SUPABASE POOLER)
     // ============================================
     TypeOrmModule.forRoot({
       type: 'postgres',
-      host: process.env.DB_HOST,
-      port: Number(process.env.DB_PORT),
-      username: process.env.DB_USERNAME,
-      password: process.env.DB_PASSWORD,
-      database: process.env.DB_DATABASE,
 
+      // CONECTA NO SUPABASE (POOLER)
+      host: process.env.DB_HOST, // aws-1-sa-east-1.pooler.supabase.com
+      port: Number(process.env.DB_PORT), // 6543
+      username: process.env.DB_USERNAME, // postgres.immtupjumavgpefcvzpg
+      password: process.env.DB_PASSWORD, // a senha que você criou
+      database: process.env.DB_DATABASE, // postgres
+
+      // Carrega todas entidades automaticamente
       entities: [__dirname + '/**/*.entity{.ts,.js}'],
 
-      // NUNCA usar synchronize em produção
+      // IMPORTANTE:
+      // Nunca use synchronize em produção
       synchronize: process.env.NODE_ENV === 'development',
 
       logging: process.env.NODE_ENV === 'development',
 
-      // OBRIGATÓRIO NO SUPABASE
-      ssl: {
-        rejectUnauthorized: false,
-      },
+      // Render + Supabase EXIGEM SSL
+      ssl: { rejectUnauthorized: false },
     }),
 
     // ============================================
@@ -71,20 +76,13 @@ config(); // Carrega .env manualmente
     AdminUserModule,
     RbacModule,
     CustomerAddressModule,
-
     PaymentModule,
-
     ProductCategoryModule,
     ProductModule,
-
     OrderModule,
-
     ReceiptModule,
-
     NotificationModule,
-
     ReportsModule,
-
     SupplierModule,
     IngredientModule,
   ],
