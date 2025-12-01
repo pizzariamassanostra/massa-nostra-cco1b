@@ -11,7 +11,8 @@ import { toast } from "react-hot-toast";
 // Criar instância do Axios
 const api = axios.create({
   baseURL:
-    process.env.NEXT_PUBLIC_API_URL || "https://massa-nostra-api.onrender.com",
+    process.env.NEXT_PUBLIC_API_URL ||
+    "https://massa-nostra-cco1b-1.onrender.com",
   timeout: 30000,
   headers: {
     "Content-Type": "application/json",
