@@ -76,14 +76,20 @@ class PaymentService {
       };
 
       // Fazer requisição POST para API
-      const response = await fetch("http://localhost:3001/payment/pix", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify(payload),
-      });
+      const response = await fetch(
+        `${
+          process.env.NEXT_PUBLIC_API_URL ||
+          (typeof window !== "undefined" ? window.location.origin : "")
+        }/payment/pix`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify(payload),
+        }
+      );
 
       // Validar resposta
       if (!response.ok) {
@@ -121,7 +127,10 @@ class PaymentService {
 
       // Requisição para verificar status
       const response = await fetch(
-        `http://localhost:3001/payment/find-one/${paymentId}`,
+        `${
+          process.env.NEXT_PUBLIC_API_URL ||
+          (typeof window !== "undefined" ? window.location.origin : "")
+        }/payment/find-one/${paymentId}`,
         {
           method: "GET",
           headers: {
