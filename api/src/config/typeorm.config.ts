@@ -10,15 +10,14 @@ import { ConfigModule } from '@nestjs/config';
 
     TypeOrmModule.forRoot({
       type: 'postgres',
-
       host: process.env.DB_HOST,
       port: parseInt(process.env.DB_PORT || '5432'),
       username: process.env.DB_USERNAME,
       password: process.env.DB_PASSWORD,
       database: process.env.DB_DATABASE,
-
       ssl: {
-        rejectUnauthorized: false, // Necessário para Supabase
+        rejectUnauthorized: false,
+        ca: process.env.SUPABASE_SSL_CERT, // Se precisar de certificado
       },
 
       autoLoadEntities: true,

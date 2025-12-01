@@ -1,10 +1,6 @@
 // ============================================
 // API - PIZZARIA MASSA NOSTRA
 // ============================================
-// Arquivo principal da aplicação NestJS
-// Configura CORS, validação, filtros, Swagger...
-// ============================================
-
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { AppValidationPipe } from './common/pipes/app-validation.pipe';
@@ -27,6 +23,12 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
   // ============================================
+  // NECESSÁRIO PARA PRODUÇÃO NO RENDER
+  // ============================================
+  app.enableShutdownHooks();
+  app.getHttpAdapter().getInstance().set('trust proxy', true);
+
+  // ============================================
   // LIMITES DE PAYLOAD
   // ============================================
   app.use(json({ limit: '10mb' }));
@@ -43,17 +45,23 @@ async function bootstrap() {
   app.useGlobalFilters(new ApiErrorFilter());
 
   // ============================================
-  // CORS — AJUSTADO PARA PRODUÇÃO NO RENDER
+  // CORS — CONFIGURAÇÃO ROBUSTA
   // ============================================
   app.enableCors({
     origin: [
       'https://massa-nostra-cco1b.onrender.com',
       'https://massa-nostra-cco1b-1.onrender.com',
-      'http://localhost:3000',
-      '*', // Temporariamente para testes
+      process.env.FRONTEND_URL,
+      process.env.FRONTEND_URL_PRODUCTION,
+      'http://localhost:3000', // Para desenvolvimento local
+      '*', // Temporário, remover em produção
     ],
     methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization'],
+    allowedHeaders: [
+      'Content-Type',
+      'Authorization',
+      'Access-Control-Allow-Origin',
+    ],
     credentials: true,
   });
 
@@ -83,12 +91,15 @@ async function bootstrap() {
   console.log('\nPizzaria Massa Nostra API');
   console.log('═══════════════════════════════════');
   console.log(`Servidor iniciando na porta ${port}...`);
-  console.log(`URL local: http://localhost:${port}`);
-  console.log(`Swagger:   http://localhost:${port}/api-docs`);
+  console.log(
+    `URL da API: ${process.env.FRONTEND_URL_PRODUCTION || 'Não configurado'}`,
+  );
+  console.log(`Swagger:   /api-docs`);
   console.log(`Ambiente: ${process.env.NODE_ENV || 'development'}`);
   console.log('═══════════════════════════════════\n');
 
-  await app.listen(port);
+  // Escuta na porta especificada
+  await app.listen(port, '0.0.0.0');
 
   console.log('API rodando com sucesso!\n');
 }
