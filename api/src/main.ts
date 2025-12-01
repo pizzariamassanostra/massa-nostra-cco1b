@@ -47,17 +47,14 @@ async function bootstrap() {
   // ============================================
   app.enableCors({
     origin: [
-      'http://localhost:3000', // Front local
-      'http://localhost:3001', // API local
-      'http://localhost:5173', // Front Vite
-      'https://massa-nostra-cco1b.onrender.com', // FRONT PRODUÇÃO
-      process.env.FRONTEND_URL_PRODUCTION, // Caso exista variável no .env
-    ].filter(Boolean), // remove indefinidos
-
+      'https://massa-nostra-cco1b.onrender.com',
+      'https://massa-nostra-cco1b-1.onrender.com',
+      'http://localhost:3000',
+      '*', // Temporariamente para testes
+    ],
     methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization'],
     credentials: true,
-    preflightContinue: false,
   });
 
   // ============================================
