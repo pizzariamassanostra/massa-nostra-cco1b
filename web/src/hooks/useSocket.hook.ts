@@ -23,8 +23,20 @@ export function useSocket() {
 
   // Conectar ao WebSocket quando componente monta
   useEffect(() => {
-    // Conectar ao servidor WebSocket
-    const newSocket = io("http://localhost:3001/notifications", {
+    // Conectar ao servidor WebSocket (usa variável de ambiente pública do Next)
+    const socketBase =
+      (process.env.NEXT_PUBLIC_SOCKET_URL as string) ||
+      (process.env.NEXT_PUBLIC_API_URL as string) ||
+      (typeof window !== "undefined"
+        ? window.location.origin
+        : "http://localhost:3001");
+
+    // remove trailing slash caso exista
+    const base = socketBase.replace(/\/$/, "");
+
+    // usa websocket para maior compatibilidade em produção
+    const newSocket: Socket = io(`${base}/notifications`, {
+      transports: ["websocket"],
       reconnection: true,
       reconnectionDelay: 1000,
       reconnectionDelayMax: 5000,

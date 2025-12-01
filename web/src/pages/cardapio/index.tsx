@@ -53,7 +53,9 @@ export default function CardapioPage() {
     } catch (error: any) {
       console.error("Erro ao carregar cardápio:", error);
       setError(
-        "Erro ao carregar produtos. Certifique-se de que a API está rodando em http://localhost:3001"
+        `Erro ao carregar produtos. Certifique-se de que a API está rodando em ${
+          process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001"
+        }`
       );
     } finally {
       setLoading(false);
