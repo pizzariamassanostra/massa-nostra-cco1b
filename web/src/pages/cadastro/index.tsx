@@ -20,8 +20,8 @@ import { formatPhone } from "@/common/helpers/format-phone";
 // Responsável pelo cadastro de novos usuários
 // ============================================================================
 export default function CadastroPage() {
-  const { register, isAuthenticated } = useAuth(); // Função de registro e estado de autenticação
-  const router = useRouter(); // Controle de navegação
+  const { register, isAuthenticated } = useAuth();
+  const router = useRouter();
 
   // ============================================
   // ESTADOS DO FORMULÁRIO
@@ -39,10 +39,10 @@ export default function CadastroPage() {
     accept_promotions: false,
   });
 
-  const [showPassword, setShowPassword] = useState(false); // Exibir senha
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false); // Exibir confirmação de senha
-  const [loading, setLoading] = useState(false); // Estado de carregamento
-  const [errors, setErrors] = useState<Record<string, string>>({}); // Erros de validação
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [errors, setErrors] = useState<Record<string, string>>({});
 
   // ============================================
   // REDIRECIONAR SE JÁ ESTIVER AUTENTICADO
@@ -56,11 +56,9 @@ export default function CadastroPage() {
   // ============================================
   // ATUALIZAR CAMPO DO FORMULÁRIO
   // ============================================
-  // Atualiza valores, aplica formatações e limpa erros
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value, type, checked } = e.target;
 
-    // Formatações automáticas
     let formattedValue = value;
 
     if (name === "cpf") {
@@ -74,7 +72,6 @@ export default function CadastroPage() {
       [name]: type === "checkbox" ? checked : formattedValue,
     }));
 
-    // Limpar erro do campo
     if (errors[name]) {
       setErrors((prev) => {
         const newErrors = { ...prev };
@@ -87,25 +84,21 @@ export default function CadastroPage() {
   // ============================================
   // VALIDAR FORMULÁRIO
   // ============================================
-  // Executa validações de todos os campos
   const validateForm = (): boolean => {
     const newErrors: Record<string, string> = {};
 
-    // Nome
     if (!formData.name.trim()) {
       newErrors.name = "Nome é obrigatório";
     } else if (formData.name.trim().split(" ").length < 2) {
       newErrors.name = "Informe nome e sobrenome";
     }
 
-    // CPF
     if (!formData.cpf) {
       newErrors.cpf = "CPF é obrigatório";
     } else if (!validateCpf(formData.cpf)) {
       newErrors.cpf = "CPF inválido";
     }
 
-    // Data de nascimento
     if (formData.birth_date) {
       const birthDate = new Date(formData.birth_date);
       const today = new Date();
@@ -117,33 +110,28 @@ export default function CadastroPage() {
       newErrors.birth_date = "Data de nascimento é obrigatória";
     }
 
-    // Telefone
     if (!formData.phone) {
       newErrors.phone = "Telefone é obrigatório";
     } else if (formData.phone.replaceAll(/\D/g, "").length < 10) {
       newErrors.phone = "Telefone inválido";
     }
 
-    // Email
     if (!formData.email) {
       newErrors.email = "Email é obrigatório";
     } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
       newErrors.email = "Email inválido";
     }
 
-    // Senha
     if (!formData.password) {
       newErrors.password = "Senha é obrigatória";
     } else if (formData.password.length < 6) {
       newErrors.password = "Senha deve ter pelo menos 6 caracteres";
     }
 
-    // Confirmação de senha
     if (formData.password !== formData.confirmPassword) {
       newErrors.confirmPassword = "Senhas não conferem";
     }
 
-    // Aceite de termos
     if (!formData.accept_terms) {
       newErrors.accept_terms = "Você deve aceitar os termos de uso";
     }
@@ -154,8 +142,8 @@ export default function CadastroPage() {
 
   // ============================================
   // SUBMETER FORMULÁRIO
+  // CORRECAO: Usa a funcao register do AuthContext corretamente
   // ============================================
-  // Envia os dados para cadastro
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -166,18 +154,29 @@ export default function CadastroPage() {
     setLoading(true);
 
     try {
-      // Remover formatação do CPF e telefones
       const cleanData = {
-        ...formData,
+        name: formData.name,
         cpf: formData.cpf.replaceAll(/\D/g, ""),
+        birth_date: formData.birth_date,
         phone: formData.phone.replaceAll(/\D/g, ""),
         phone_alternative:
           formData.phone_alternative?.replaceAll(/\D/g, "") || undefined,
+        email: formData.email,
+        password: formData.password,
+        accept_terms: formData.accept_terms,
+        accept_promotions: formData.accept_promotions,
       };
 
+      console.log("Enviando cadastro:", cleanData);
+
       await register(cleanData);
-    } catch (error: unknown) {
+
+      router.push("/cardapio");
+    } catch (error: any) {
       console.error("Erro ao registrar:", error);
+      setErrors({
+        email: error.message || "Erro ao cadastrar.  Tente novamente.",
+      });
     } finally {
       setLoading(false);
     }
@@ -185,21 +184,12 @@ export default function CadastroPage() {
 
   return (
     <>
-      {/* ============================================ */}
-      {/* HEAD DA PÁGINA */}
-      {/* ============================================ */}
       <Head>
         <title>Cadastro - Pizzaria Massa Nostra</title>
       </Head>
 
-      {/* ============================================ */}
-      {/* CONTAINER PRINCIPAL */}
-      {/* ============================================ */}
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-red-600 to-red-700 px-4 py-8">
         <div className="bg-white rounded-lg shadow-xl p-8 w-full max-w-2xl">
-          {/* ============================================ */}
-          {/* LOGO */}
-          {/* ============================================ */}
           <div className="text-center mb-8">
             <div className="w-20 h-20 bg-red-600 rounded-full flex items-center justify-center text-4xl mx-auto mb-4">
               🍕
@@ -207,13 +197,8 @@ export default function CadastroPage() {
             <h1 className="text-3xl font-bold text-gray-800">Criar Conta</h1>
             <p className="text-gray-600 mt-2">Cadastre-se para fazer pedidos</p>
           </div>
-          {/* ============================================ */}
-          {/* FORMULÁRIO */}
-          {/* ============================================ */}
+
           <form onSubmit={handleSubmit} className="space-y-4">
-            {/* ============================================ */}
-            {/* CAMPO: NOME COMPLETO */}
-            {/* ============================================ */}
             <div>
               <label
                 htmlFor="name"
@@ -237,9 +222,6 @@ export default function CadastroPage() {
               )}
             </div>
 
-            {/* ============================================ */}
-            {/* CPF E DATA DE NASCIMENTO */}
-            {/* ============================================ */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <label
@@ -290,9 +272,6 @@ export default function CadastroPage() {
               </div>
             </div>
 
-            {/* ============================================ */}
-            {/* TELEFONES */}
-            {/* ============================================ */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <label
@@ -330,15 +309,12 @@ export default function CadastroPage() {
                   type="tel"
                   value={formData.phone_alternative}
                   onChange={handleChange}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus: ring-red-500 focus: border-transparent"
                   placeholder="(38) 98888-8888"
                 />
               </div>
             </div>
 
-            {/* ============================================ */}
-            {/* EMAIL */}
-            {/* ============================================ */}
             <div>
               <label
                 htmlFor="email"
@@ -362,9 +338,6 @@ export default function CadastroPage() {
               )}
             </div>
 
-            {/* ============================================ */}
-            {/* SENHAS */}
-            {/* ============================================ */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <label
@@ -443,9 +416,6 @@ export default function CadastroPage() {
               </div>
             </div>
 
-            {/* ============================================ */}
-            {/* CHECKBOXES - LGPD */}
-            {/* ============================================ */}
             <div className="space-y-3">
               <label className="flex items-start gap-2">
                 <input
@@ -459,14 +429,14 @@ export default function CadastroPage() {
                   Aceito os{" "}
                   <Link
                     href="/termos-de-uso"
-                    className="text-red-600 hover:underline"
+                    className="text-red-600 hover: underline"
                   >
                     termos de uso
                   </Link>{" "}
                   e{" "}
                   <Link
                     href="/politica-privacidade"
-                    className="text-red-600 hover:underline"
+                    className="text-red-600 hover: underline"
                   >
                     política de privacidade
                   </Link>{" "}
@@ -476,9 +446,7 @@ export default function CadastroPage() {
               {errors.accept_terms && (
                 <p className="text-red-500 text-xs">{errors.accept_terms}</p>
               )}
-              {/* ============================================ */}
-              {/* CHECKBOX: PROMOÇÕES */}
-              {/* ============================================ */}
+
               <label className="flex items-start gap-2">
                 <input
                   type="checkbox"
@@ -493,9 +461,6 @@ export default function CadastroPage() {
               </label>
             </div>
 
-            {/* ============================================ */}
-            {/* BOTÃO: SUBMIT */}
-            {/* ============================================ */}
             <button
               type="submit"
               disabled={loading}
@@ -505,9 +470,6 @@ export default function CadastroPage() {
             </button>
           </form>
 
-          {/* ============================================ */}
-          {/* LINKS AUXILIARES */}
-          {/* ============================================ */}
           <div className="mt-6 text-center space-y-3">
             <p className="text-gray-600">
               Já tem uma conta?{" "}

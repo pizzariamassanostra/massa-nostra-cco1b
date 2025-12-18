@@ -156,7 +156,6 @@ export const OrderPreparingTimeline: React.FC<OrderPreparingTimelineProps> = ({
       {/* CABEÇALHO DO COMPONENTE */}
       <div className="mb-6">
         <h3 className="text-xl font-bold text-gray-800">
-          {/* 🔧 CORREÇÃO: Movido o comentário para dentro das chaves JSX */}
           {
             orderStatus === "delivered"
               ? "✓ Pedido Entregue" /* Título exibido quando pedido foi entregue */

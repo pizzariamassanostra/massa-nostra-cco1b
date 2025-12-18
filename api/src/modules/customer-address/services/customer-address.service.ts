@@ -1,5 +1,5 @@
 // ============================================
-// SERVIÇO: CUSTOMER ADDRESS
+// SERVIÇO:  CUSTOMER ADDRESS
 // ============================================
 // Responsável pela lógica de gerenciamento de endereços de clientes,
 // incluindo criação, listagem, atualização e exclusão (soft delete).
@@ -85,6 +85,22 @@ export class CustomerAddressService {
       ok: true,
       count: addresses.length,
       data: addresses,
+    };
+  }
+
+  // CORRECAO: Busca um endereço específico do cliente
+  async findOneAddress(customerId: number, addressId: number) {
+    const address = await this.addressRepo.findOne({
+      where: { id: addressId, common_user_id: customerId },
+    });
+
+    if (!address) {
+      throw new NotFoundException('Endereço não encontrado');
+    }
+
+    return {
+      ok: true,
+      data: address,
     };
   }
 
