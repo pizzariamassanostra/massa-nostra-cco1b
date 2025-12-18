@@ -1,5 +1,13 @@
 // ============================================
-// MÓDULO PRINCIPAL DA APLICAÇÃO
+// MÓDULO: APP MODULE
+// ============================================
+// Módulo raiz da aplicação NestJS
+// Responsável por carregar configurações globais
+// e registrar todos os módulos da aplicação
+// ============================================
+
+// ============================================
+// IMPORTS: NestJS
 // ============================================
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
@@ -8,7 +16,7 @@ import { ScheduleModule } from '@nestjs/schedule';
 import { config } from 'dotenv';
 
 // ============================================
-// IMPORTAR MÓDULOS DA APLICAÇÃO
+// IMPORTS: MÓDULOS DA APLICAÇÃO
 // ============================================
 import { AuthModule } from './modules/auth/auth.module';
 import { AdminUserModule } from './modules/admin-user/admin-user.module';
@@ -26,53 +34,62 @@ import { SupplierModule } from './modules/supplier/supplier.module';
 import { IngredientModule } from './modules/ingredient/ingredient.module';
 
 // ============================================
-// Carrega .env
+// CARREGAMENTO DO .ENV
 // ============================================
 config();
 
 @Module({
   imports: [
     // ============================================
-    // CONFIGURAÇÃO GLOBAL DO .ENV
+    // CONFIGURAÇÃO GLOBAL DE VARIÁVEIS DE AMBIENTE
     // ============================================
     ConfigModule.forRoot({
-      isGlobal: true,
-      envFilePath: '.env',
+      isGlobal: true, // Disponibiliza variáveis globalmente
+      envFilePath: '.env', // Caminho do arquivo .env
     }),
 
+    // ============================================
+    // AGENDAMENTO DE TAREFAS (CRON / INTERVAL)
+    // ============================================
     ScheduleModule.forRoot(),
 
     // ============================================
-    // TYPEORM (PRODUÇÃO + SUPABASE POOLER)
+    // CONFIGURAÇÃO: TYPEORM + SUPABASE (POOLER)
     // ============================================
     TypeOrmModule.forRoot({
-      type: 'postgres',
+      type: 'postgres', // Banco PostgreSQL
 
-      // CONECTA NO SUPABASE (POOLER)
-      host: process.env.DB_HOST, // 'aws-1-sa-east-1.pooler.supabase.com'
-      port: parseInt(process.env.DB_PORT || '6543'), // IMPORTANTE: Supabase usa 6543 no pooler
-      username: process.env.DB_USERNAME, // 'postgres.immtupjumavgpefcvzpg'
-      password: process.env.DB_PASSWORD,
-      database: process.env.DB_NAME || 'postgres',
+      // ============================================
+      // CONEXÃO COM SUPABASE (POOLER)
+      // ============================================
+      host: process.env.DB_HOST, // Host do pooler Supabase
+      port: parseInt(process.env.DB_PORT || '6543'), // Porta padrão do pooler
+      username: process.env.DB_USERNAME, // Usuário do banco
+      password: process.env.DB_PASSWORD, // Senha do banco
+      database: process.env.DB_NAME || 'postgres', // Nome do banco
 
-      // Carrega todas entidades automaticamente
-      entities: [__dirname + '/**/*.entity{.ts,.js}'],
+      // ============================================
+      // ENTIDADES
+      // ============================================
+      entities: [__dirname + '/**/*.entity{.ts,.js}'], // Carrega entidades automaticamente
 
-      // IMPORTANTE:
-      // Nunca use synchronize em produção
-      synchronize: false, // NUNCA use true em produção
+      // ============================================
+      // CONFIGURAÇÕES IMPORTANTES
+      // ============================================
+      synchronize: false, // NUNCA usar true em produção
+      logging: process.env.NODE_ENV === 'development', // Logs apenas em dev
 
-      logging: process.env.NODE_ENV === 'development',
-
-      // Render + Supabase EXIGEM SSL
+      // ============================================
+      // SSL (Obrigatório: Render + Supabase)
+      // ============================================
       ssl: {
-        rejectUnauthorized: false,
-        ca: process.env.SUPABASE_SSL_CERT, // Se precisar de certificado específico
+        rejectUnauthorized: false, // Aceita certificado autoassinado
+        ca: process.env.SUPABASE_SSL_CERT, // Certificado customizado (se existir)
       },
     }),
 
     // ============================================
-    // MÓDULOS DA APLICAÇÃO
+    // REGISTRO DOS MÓDULOS DA APLICAÇÃO
     // ============================================
     AuthModule,
     CommonUserModule,

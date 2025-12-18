@@ -1,40 +1,80 @@
+// ============================================
+// SCRIPT: SEED RBAC
+// ============================================
+// Responsável por inicializar a conexão com o banco
+// e executar o seed de papéis e permissões (RBAC)
+// ============================================
+
+// ============================================
+// IMPORTS: TypeORM
+// ============================================
 import { DataSource } from 'typeorm';
+
+// ============================================
+// IMPORTS: SEEDS
+// ============================================
 import { seedRBAC } from '../modules/rbac/seeds/rbac.seed';
+
+// ============================================
+// IMPORTS: ENV
+// ============================================
 import * as dotenv from 'dotenv';
 
-// Carrega variáveis de ambiente definidas no arquivo .env
+// ============================================
+// CARREGA VARIÁVEIS DE AMBIENTE (.env)
+// ============================================
 dotenv.config();
 
-// Configuração da conexão com o banco de dados PostgreSQL
+// ============================================
+// CONFIGURAÇÃO: DATA SOURCE (POSTGRESQL)
+// ============================================
+// Utiliza URL única de conexão (ex.: Supabase / Render)
+// ============================================
 const AppDataSource = new DataSource({
-  type: 'postgres', // Tipo de banco utilizado
-  url: process.env.DATABASE_URL, // URL de conexão obtida das variáveis de ambiente
-  entities: ['dist/**/*.entity{.ts,.js}'], // Caminho das entidades compiladas
-  synchronize: false, // Evita sincronização automática (boa prática em produção)
+  type: 'postgres', // Tipo do banco de dados
+  url: process.env.DATABASE_URL, // URL de conexão do banco
+  entities: ['dist/**/*.entity{.ts,.js}'], // Entidades compiladas
+  synchronize: false, // Nunca sincronizar automaticamente em produção
   ssl: {
-    rejectUnauthorized: false, // Permite conexões SSL mesmo sem certificado confiável
+    rejectUnauthorized: false, // Aceita SSL sem validação de certificado
   },
 });
 
-// Função principal responsável por inicializar a conexão e executar o seed
+// ============================================
+// FUNÇÃO: bootstrap
+// ============================================
+// Inicializa a conexão com o banco,
+// executa o seed de RBAC e encerra o processo
+// ============================================
 async function bootstrap() {
   try {
+    // Log inicial
     console.log('Conectando ao banco de dados...');
     console.log('URL:', process.env.DATABASE_URL?.substring(0, 30) + '...');
 
-    await AppDataSource.initialize(); // Inicializa a conexão com o banco
+    // Inicializa conexão com o banco
+    await AppDataSource.initialize();
     console.log('Conectado ao banco de dados');
 
-    await seedRBAC(AppDataSource); // Executa o seed de RBAC (roles e permissões)
+    // Executa seed de RBAC (roles e permissões)
+    await seedRBAC(AppDataSource);
 
-    await AppDataSource.destroy(); // Fecha a conexão após o seed
+    // Encerra conexão com o banco
+    await AppDataSource.destroy();
     console.log('Seed concluído com sucesso!');
-    process.exit(0); // Finaliza o processo com sucesso
+
+    // Finaliza processo com sucesso
+    process.exit(0);
   } catch (error) {
-    console.error('Erro ao executar seed:', error); // Log de erro em caso de falha
-    process.exit(1); // Finaliza o processo com código de erro
+    // Log de erro
+    console.error('Erro ao executar seed:', error);
+
+    // Finaliza processo com erro
+    process.exit(1);
   }
 }
 
-// Executa a função principal
+// ============================================
+// EXECUÇÃO DO SCRIPT
+// ============================================
 bootstrap();

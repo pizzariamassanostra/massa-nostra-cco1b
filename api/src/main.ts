@@ -1,21 +1,43 @@
 // ============================================
 // API - PIZZARIA MASSA NOSTRA
 // ============================================
+// Arquivo principal de inicialização da API
+// Responsável por configurar middlewares, CORS, Swagger e subir o servidor
+// ============================================
+
+// ============================================
+// IMPORTS: Core NestJS
+// ============================================
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
+
+// ============================================
+// IMPORTS: Pipes e Filters Globais
+// ============================================
 import { AppValidationPipe } from './common/pipes/app-validation.pipe';
 import { ApiErrorFilter } from './common/pipes/filter-error.pipe';
+
+// ============================================
+// IMPORTS: Configuração de Ambiente
+// ============================================
 import { config } from 'dotenv';
 
 // Carrega variáveis de ambiente
 config();
 
-// Importa Express para configurações avançadas
+// ============================================
+// IMPORTS: Express (Configurações avançadas)
+// ============================================
 import { json, urlencoded } from 'express';
 
-// Swagger
+// ============================================
+// IMPORTS: Swagger
+// ============================================
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 
+// ============================================
+// FUNÇÃO PRINCIPAL: bootstrap
+// ============================================
 async function bootstrap() {
   // ============================================
   // CRIA INSTÂNCIA DO NEST

@@ -1,37 +1,61 @@
 // ============================================
-// CONFIGURAÇÃO TYPEORM + SUPABASE
+// CONFIGURAÇÃO: TYPEORM + SUPABASE
 // ============================================
-// Este arquivo configura a conexão com o banco PostgreSQL do Supabase
-// usando TypeORM como ORM (Object-Relational Mapping)
+// Arquivo responsável por configurar a conexão
+// com o banco PostgreSQL do Supabase via TypeORM
 // ============================================
 
+// ============================================
+// IMPORTS: TypeORM
+// ============================================
 import { DataSource } from 'typeorm';
+
+// ============================================
+// IMPORTS: Variáveis de Ambiente
+// ============================================
 import * as dotenv from 'dotenv';
 
-// Carrega variáveis de ambiente do arquivo .env
+// ============================================
+// CARREGAMENTO DAS VARIÁVEIS DE AMBIENTE
+// ============================================
 dotenv.config();
 
-// Configuração da conexão com Supabase (PostgreSQL)
+// ============================================
+// CONFIGURAÇÃO: DataSource (TypeORM)
+// ============================================
 const config = new DataSource({
-  type: 'postgres', // Tipo de banco (Supabase usa PostgreSQL)
+  type: 'postgres', // Tipo de banco (Supabase utiliza PostgreSQL)
 
-  // Credenciais do Supabase
-  host: process.env.DB_HOST, // db.immtupjumavgpefcvzpg.supabase.co
-  port: Number(process.env.DB_PORT), // 5432
-  username: process.env.DB_USERNAME, // postgres
-  password: process.env.DB_PASSWORD, // Pizza@Massa@Nostra
-  database: process.env.DB_NAME, // postgres
-  // TypeORM vai buscar todos os arquivos .entity.ts ou .entity.js
+  // ============================================
+  // CREDENCIAIS DO BANCO (Supabase)
+  // ============================================
+  host: process.env.DB_HOST, // Host do banco
+  port: Number(process.env.DB_PORT), // Porta de conexão (ex: 5432)
+  username: process.env.DB_USERNAME, // Usuário do banco
+  password: process.env.DB_PASSWORD, // Senha do banco
+  database: process.env.DB_NAME, // Nome do banco
+
+  // ============================================
+  // ENTIDADES
+  // ============================================
+  // TypeORM carrega automaticamente arquivos *.entity.ts ou *.entity.js
   entities: [__dirname + '/**/*.entity{.ts,.js}'],
 
-  synchronize: false,
+  // ============================================
+  // CONFIGURAÇÕES GERAIS
+  // ============================================
+  synchronize: false, // Nunca usar true em produção
+  logging: process.env.NODE_ENV === 'development', // Log apenas em desenvolvimento
 
-  logging: process.env.NODE_ENV === 'development',
-
-  // SSL necessário para Supabase
+  // ============================================
+  // SSL (Obrigatório no Supabase)
+  // ============================================
   ssl: {
-    rejectUnauthorized: false, // Aceita certificados auto-assinados
+    rejectUnauthorized: false, // Aceita certificados autoassinados
   },
 });
 
+// ============================================
+// EXPORTAÇÃO: DataSource
+// ============================================
 export default config;

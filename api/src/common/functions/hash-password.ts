@@ -1,36 +1,48 @@
 // ============================================
-// FUNÇÃO: HASH E VALIDAÇÃO DE SENHAS
+// HELPER: HASH E VALIDAÇÃO DE SENHAS
 // ============================================
-// Usa bcrypt para criptografar e validar senhas
+// Utilitário responsável por:
+// - Gerar hash de senha com bcrypt
+// - Validar senha em texto contra hash armazenado
 // ============================================
 
 import * as bcrypt from 'bcrypt';
 
 // ============================================
-// GERAR HASH DE SENHA
+// FUNÇÃO: hashPassword
 // ============================================
-// Gera hash bcrypt com 10 rounds
-export async function hashPassword(password: string): Promise<string> {
-  const saltRounds = 10; // Número de rounds do bcrypt (padrão: 10)
+// Gera hash bcrypt a partir de senha em texto
+// Usa salt rounds padrão (10)
+// ============================================
+const hashPassword = async (password: string): Promise<string> => {
+  // Número de rounds do bcrypt (padrão seguro)
+  const saltRounds = 10;
+
+  // Gera hash criptografado
   const hash = await bcrypt.hash(password, saltRounds);
+
+  // Retorna hash gerado
   return hash;
-}
+};
 
 // ============================================
-// VALIDAR SENHA
+// FUNÇÃO: validatePassword
 // ============================================
 // Compara senha em texto puro com hash armazenado
-export async function validatePassword(
+// Retorna true se a senha for válida
+// ============================================
+const validatePassword = async (
   password: string,
   hash: string,
-): Promise<boolean> {
+): Promise<boolean> => {
+  // Compara senha com hash
   const isValid = await bcrypt.compare(password, hash);
+
+  // Retorna resultado da validação
   return isValid;
-}
+};
 
 // ============================================
-// EXEMPLO DE USO:
+// EXPORTAÇÃO
 // ============================================
-// const senha = "MinhaSenh@123";
-// const hash = await hashPassword(senha); // "$2b$10$..."
-// const valido = await validatePassword(senha, hash); // true
+export { hashPassword, validatePassword };

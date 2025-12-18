@@ -1,31 +1,44 @@
 // ============================================
 // FUNÇÃO: CENSURAR NOME
 // ============================================
-// Oculta nomes do meio (LGPD)
+// Responsável por ocultar nomes do meio
+// Atende LGPD / privacidade de dados pessoais
 // Exemplo: "João Silva Santos" → "João S***** Santos"
 // ============================================
 
-export const censorName = (username: string): string => {
+// ============================================
+// FUNÇÃO: censorName
+// ============================================
+const censorName = (username: string): string => {
+  // Remove espaços extras e separa o nome em partes
   const usernameArray = username.trim().split(' ');
+
+  // Array que armazenará o nome censurado
   let censoredArray: string[] = [];
 
-  usernameArray?.forEach((word, index) => {
-    // Manter primeiro e último nome
-    if ([usernameArray.length - 1, 0].includes(index)) {
+  usernameArray.forEach((word, index) => {
+    // Mantém o primeiro e o último nome visíveis
+    if ([0, usernameArray.length - 1].includes(index)) {
       censoredArray.push(word);
     } else {
-      // Censurar nomes do meio
+      // Censura nomes do meio mantendo apenas a primeira letra
       censoredArray.push(
         word
           .split('')
-          .map((char, index) => {
-            if (index === 0) return char;
-            return '*';
+          .map((char, charIndex) => {
+            if (charIndex === 0) return char; // Mantém a primeira letra
+            return '*'; // Substitui o restante por asteriscos
           })
           .join(''),
       );
     }
   });
 
+  // Retorna o nome censurado
   return censoredArray.join(' ');
 };
+
+// ============================================
+// EXPORTAÇÃO
+// ============================================
+export { censorName };

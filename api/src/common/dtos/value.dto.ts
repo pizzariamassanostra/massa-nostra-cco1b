@@ -1,12 +1,23 @@
 // ============================================
 // DTO: VALOR GENÉRICO
 // ============================================
-// DTO para operações que recebem apenas um valor numérico
+// DTO utilizado em operações que recebem
+// apenas um valor numérico simples
+// (ex.: atualização de preço, taxa, quantidade)
 // ============================================
 
+// ============================================
+// IMPORTS
+// ============================================
 import { IsNotEmpty, IsNumber } from 'class-validator';
 
+// ============================================
+// DTO: ValueDto
+// ============================================
 export class ValueDto {
+  // ============================================
+  // CAMPO: Valor numérico obrigatório
+  // ============================================
   @IsNotEmpty({
     context: {
       message: 'missing-value',
@@ -22,5 +33,5 @@ export class ValueDto {
       },
     },
   )
-  value: number;
+  value: number; // Valor numérico recebido pela operação
 }

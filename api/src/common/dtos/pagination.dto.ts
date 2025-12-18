@@ -1,18 +1,29 @@
 // ============================================
 // DTO: PAGINAÇÃO
 // ============================================
-// DTO para listagens paginadas
+// DTO genérico utilizado em listagens paginadas
+// Suporta busca, paginação e ordenação
 // ============================================
 
+// ============================================
+// IMPORTS
+// ============================================
 import { Transform } from 'class-transformer';
 import { IsInt, IsOptional } from 'class-validator';
 
+// ============================================
+// DTO: PaginationDto
+// ============================================
 export class PaginationDto<T = {}> {
-  // Busca por nome/ID
+  // ============================================
+  // FILTRO: Busca por nome ou identificador
+  // ============================================
   @IsOptional()
   name?: string;
 
-  // Número da página
+  // ============================================
+  // PAGINAÇÃO: Número da página
+  // ============================================
   @IsInt({
     context: {
       message: 'invalid-page',
@@ -20,10 +31,12 @@ export class PaginationDto<T = {}> {
     },
   })
   @IsOptional()
-  @Transform(({ value }) => parseInt(value))
+  @Transform(({ value }) => parseInt(value)) // Converte string para número
   page?: number;
 
-  // Resultados por página
+  // ============================================
+  // PAGINAÇÃO: Resultados por página
+  // ============================================
   @IsInt({
     context: {
       message: 'invalid-per_page',
@@ -31,14 +44,18 @@ export class PaginationDto<T = {}> {
     },
   })
   @IsOptional()
-  @Transform(({ value }) => parseInt(value))
+  @Transform(({ value }) => parseInt(value)) // Converte string para número
   per_page?: number;
 
-  // Campo de ordenação
+  // ============================================
+  // ORDENAÇÃO: Campo de ordenação
+  // ============================================
   @IsOptional()
   orderBy?: keyof T;
 
-  // Direção da ordenação
+  // ============================================
+  // ORDENAÇÃO: Direção (ASC | DESC)
+  // ============================================
   @IsOptional()
   direction?: 'ASC' | 'DESC';
 }

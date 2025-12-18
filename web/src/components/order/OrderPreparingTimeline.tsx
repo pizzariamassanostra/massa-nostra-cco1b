@@ -157,9 +157,9 @@ export const OrderPreparingTimeline: React.FC<OrderPreparingTimelineProps> = ({
       <div className="mb-6">
         <h3 className="text-xl font-bold text-gray-800">
           {orderStatus === "delivered"
-            ? "✓ Pedido Entregue" // Título exibido quando pedido foi entregue
-            : "Acompanhando seu pedido"}{" "}
-          // Título padrão durante o progresso
+            ? "✓ Pedido Entregue"
+            : "Acompanhando seu pedido"}
+          {/* Título padrão durante o progresso */}
         </h3>
 
         {/* Número do pedido (opcional) */}

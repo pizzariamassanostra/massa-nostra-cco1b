@@ -1,18 +1,32 @@
 // ============================================
-// GUARD: AUTENTICAÇÃO JWT PARA CLIENTES
+// GUARD: JWT CUSTOMER AUTH
 // ============================================
-// Protege rotas que exigem autenticação de cliente
-// Diferente do JwtAuthGuard (que é para admins)
+// Autenticação exclusiva para clientes
+// Diferente do JwtAuthGuard (admins)
 // ============================================
 
+// ============================================
+// IMPORTS
+// ============================================
 import ApiError from '@/common/error/entities/api-error.entity';
 import { Injectable } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 
+// ============================================
+// CLASSE: JwtCustomerAuthGuard
+// ============================================
 @Injectable()
-export class JwtCustomerAuthGuard extends AuthGuard('jwt-customer') {
+class JwtCustomerAuthGuard extends AuthGuard('jwt-customer') {
+  // ============================================
+  // MÉTODO: handleRequest
+  // ============================================
+  // - Trata erros de autenticação do Passport
+  // - Personaliza mensagens para o cliente final
+  // ============================================
   handleRequest(err: any, user: any, info: any) {
-    // Token expirado
+    // ============================================
+    // TOKEN EXPIRADO
+    // ============================================
     if (info?.message === 'jwt expired') {
       throw new ApiError(
         'token-expired',
@@ -21,7 +35,9 @@ export class JwtCustomerAuthGuard extends AuthGuard('jwt-customer') {
       );
     }
 
-    // Token ausente
+    // ============================================
+    // TOKEN AUSENTE
+    // ============================================
     if (info?.message === 'No auth token') {
       throw new ApiError(
         'missing-token',
@@ -30,7 +46,9 @@ export class JwtCustomerAuthGuard extends AuthGuard('jwt-customer') {
       );
     }
 
-    // Erro genérico ou usuário não encontrado
+    // ============================================
+    // TOKEN INVÁLIDO OU USUÁRIO NÃO AUTENTICADO
+    // ============================================
     if (err || !user) {
       throw (
         err ||
@@ -42,6 +60,14 @@ export class JwtCustomerAuthGuard extends AuthGuard('jwt-customer') {
       );
     }
 
+    // ============================================
+    // AUTENTICAÇÃO OK
+    // ============================================
     return user;
   }
 }
+
+// ============================================
+// EXPORTAÇÃO
+// ============================================
+export { JwtCustomerAuthGuard };

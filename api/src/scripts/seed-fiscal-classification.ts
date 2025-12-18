@@ -2,21 +2,27 @@
 // SCRIPT: POPULAR CLASSIFICAÇÃO FISCAL
 // ============================================
 // Popula NCM, CEST e CFOP dos ingredientes
-// Baseado na tabela da Receita Federal
+// Baseado na tabela oficial da Receita Federal
 // ============================================
 
+// ============================================
+// IMPORTS
+// ============================================
 import { DataSource } from 'typeorm';
 import * as dotenv from 'dotenv';
 
+// ============================================
+// CARREGA VARIÁVEIS DE AMBIENTE (.env)
+// ============================================
 dotenv.config();
 
-/**
- * TABELA DE CLASSIFICAÇÃO FISCAL
- *
- * NCM: Nomenclatura Comum (8 dígitos)
- * CEST: Código Especificador da Substituição Tributária (7 dígitos)
- * CFOP: Código Fiscal de Operações e Prestações (4 dígitos)
- */
+// ============================================
+// CONSTANTE: CLASSIFICAÇÃO FISCAL
+// ============================================
+// NCM  - Nomenclatura Comum do Mercosul (8 dígitos)
+// CEST - Código Especificador da Substituição Tributária (7 dígitos)
+// CFOP - Código Fiscal de Operações e Prestações (4 dígitos)
+// ============================================
 const FISCAL_CLASSIFICATION = {
   // ============================================
   // INGREDIENTES BÁSICOS
@@ -148,7 +154,16 @@ const FISCAL_CLASSIFICATION = {
   },
 };
 
+// ============================================
+// FUNÇÃO: seedFiscalClassification
+// ============================================
+// Conecta no banco e atualiza NCM, CEST e CFOP
+// dos ingredientes com base no nome
+// ============================================
 async function seedFiscalClassification() {
+  // ============================================
+  // CONFIGURAÇÃO: DATA SOURCE
+  // ============================================
   const dataSource = new DataSource({
     type: 'postgres',
     host: process.env.DB_HOST,
@@ -160,18 +175,21 @@ async function seedFiscalClassification() {
   });
 
   try {
+    // Inicializa conexão com o banco
     await dataSource.initialize();
     console.log('Conectado ao banco de dados');
 
+    // Cria QueryRunner para execução manual de queries
     const queryRunner = dataSource.createQueryRunner();
 
+    // Itera sobre tabela de classificação fiscal
     for (const [name, classification] of Object.entries(
       FISCAL_CLASSIFICATION,
     )) {
       const result = await queryRunner.query(
         `UPDATE ingredients 
-         SET ncm = $1, cest = $2, cfop = $3, updated_at = NOW()
-         WHERE name ILIKE $4`,
+        SET ncm = $1, cest = $2, cfop = $3, updated_at = NOW()
+        WHERE name ILIKE $4`,
         [
           classification.ncm,
           classification.cest,
@@ -180,6 +198,7 @@ async function seedFiscalClassification() {
         ],
       );
 
+      // Log de resultado
       if (result[1] > 0) {
         console.log(`${name}: NCM ${classification.ncm}`);
       } else {
@@ -189,12 +208,16 @@ async function seedFiscalClassification() {
 
     console.log('\nClassificação fiscal populada com sucesso!');
 
+    // Encerra conexão
     await dataSource.destroy();
   } catch (error) {
+    // Log de erro
     console.error('Erro:', error);
     process.exit(1);
   }
 }
 
-// Executar script
+// ============================================
+// EXECUÇÃO DO SCRIPT
+// ============================================
 seedFiscalClassification();
