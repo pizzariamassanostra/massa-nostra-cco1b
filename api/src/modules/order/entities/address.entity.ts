@@ -2,6 +2,10 @@
 // ENTIDADE: ENDEREÇOS DE ENTREGA
 // ============================================
 // Endereços cadastrados pelos clientes
+// CORREÇÕES APLICADAS:
+// Campo 'number' agora é VARCHAR(20) para aceitar strings
+// Tipo timestamptz mantido para timestamps
+// Nullable corrigido nos campos opcionais
 // ============================================
 
 import {
@@ -21,7 +25,9 @@ export class Address {
   @PrimaryGeneratedColumn()
   id: number;
 
-  // Cliente dono do endereço
+  // ============================================
+  // RELACIONAMENTO COM CLIENTE
+  // ============================================
   @Column()
   common_user_id: number;
 
@@ -29,38 +35,49 @@ export class Address {
   @JoinColumn({ name: 'common_user_id' })
   user: CommonUser;
 
-  // Dados do endereço
-  @Column({ length: 255 })
+  // ============================================
+  // DADOS DO ENDEREÇO
+  // ============================================
+
+  @Column({ type: 'varchar', length: 255 })
   street: string; // Rua/Avenida
 
-  @Column({ length: 20 })
-  number: string; // Número
+  // Tipo VARCHAR ao invés de INT para aceitar "123", "S/N", etc
+  @Column({ type: 'varchar', length: 20 })
+  number: string; // Número (aceita string:  "123", "S/N", "KM 5")
 
-  @Column({ length: 100, nullable: true })
-  complement: string; // Complemento (apto, bloco, etc)
+  // Nullable true para campos opcionais
+  @Column({ type: 'varchar', length: 100, nullable: true })
+  complement?: string; // Complemento (apto, bloco, etc)
 
-  @Column({ length: 100 })
+  @Column({ type: 'varchar', length: 100 })
   neighborhood: string; // Bairro
 
-  @Column({ length: 100 })
+  @Column({ type: 'varchar', length: 100 })
   city: string; // Cidade
 
-  @Column({ length: 2 })
+  @Column({ type: 'varchar', length: 2 })
   state: string; // Estado (UF)
 
-  @Column({ length: 10 })
+  @Column({ type: 'varchar', length: 10 })
   zip_code: string; // CEP
 
-  @Column({ length: 255, nullable: true })
-  reference: string; // Ponto de referência
+  @Column({ type: 'varchar', length: 255, nullable: true })
+  reference?: string; // Ponto de referência
 
-  @Column({ length: 500, nullable: true })
-  delivery_instructions: string; // Instruções de entrega
+  // Aumentado para 500 caracteres para instruções detalhadas
+  @Column({ type: 'varchar', length: 500, nullable: true })
+  delivery_instructions?: string; // Instruções de entrega
 
-  // Endereço padrão
-  @Column({ default: false })
+  // ============================================
+  // ENDEREÇO PADRÃO
+  // ============================================
+  @Column({ type: 'boolean', default: false })
   is_default: boolean;
 
+  // ============================================
+  // TIMESTAMPS
+  // ============================================
   @CreateDateColumn({ type: 'timestamptz' })
   created_at: Date;
 
@@ -68,5 +85,5 @@ export class Address {
   updated_at: Date;
 
   @DeleteDateColumn({ type: 'timestamptz', select: false })
-  deleted_at: Date;
+  deleted_at?: Date;
 }

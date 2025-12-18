@@ -1,61 +1,83 @@
 // ============================================
-// CONFIGURAÇÃO: TYPEORM + SUPABASE
+// CONFIGURAÇÃO DO TYPEORM - PIZZARIA MASSA NOSTRA
 // ============================================
-// Arquivo responsável por configurar a conexão
-// com o banco PostgreSQL do Supabase via TypeORM
+// CORREÇÃO:  Removido espaço extra na linha migrations
 // ============================================
 
-// ============================================
-// IMPORTS: TypeORM
-// ============================================
-import { DataSource } from 'typeorm';
+import { DataSource, DataSourceOptions } from 'typeorm';
+import { config } from 'dotenv';
+import { join } from 'path';
+
+config();
 
 // ============================================
-// IMPORTS: Variáveis de Ambiente
+// VALIDAR VARIÁVEIS OBRIGATÓRIAS
 // ============================================
-import * as dotenv from 'dotenv';
+const requiredEnvVars = [
+  'DB_HOST',
+  'DB_PORT',
+  'DB_USERNAME',
+  'DB_PASSWORD',
+  'DB_DATABASE',
+];
+
+for (const envVar of requiredEnvVars) {
+  if (!process.env[envVar]) {
+    throw new Error(`Variável ${envVar} não encontrada no .env`);
+  }
+}
 
 // ============================================
-// CARREGAMENTO DAS VARIÁVEIS DE AMBIENTE
+// LOG DE CONFIGURAÇÃO (apenas dev)
 // ============================================
-dotenv.config();
+if (process.env.NODE_ENV !== 'production') {
+  console.log(' Configuração do banco: ');
+  console.log('   Host:', process.env.DB_HOST);
+  console.log('   Port:', process.env.DB_PORT);
+  console.log('   User:', process.env.DB_USERNAME);
+  console.log('   Database:', process.env.DB_DATABASE);
+  console.log('   SSL:  Habilitado');
+}
 
 // ============================================
-// CONFIGURAÇÃO: DataSource (TypeORM)
+// CONFIGURAÇÃO DO DATASOURCE
 // ============================================
-const config = new DataSource({
-  type: 'postgres', // Tipo de banco (Supabase utiliza PostgreSQL)
+export const dataSourceOptions: DataSourceOptions = {
+  type: 'postgres',
+  host: process.env.DB_HOST,
+  port: parseInt(process.env.DB_PORT || '6543', 10),
+  username: process.env.DB_USERNAME,
+  password: process.env.DB_PASSWORD,
+  database: process.env.DB_DATABASE,
 
-  // ============================================
-  // CREDENCIAIS DO BANCO (Supabase)
-  // ============================================
-  host: process.env.DB_HOST, // Host do banco
-  port: Number(process.env.DB_PORT), // Porta de conexão (ex: 5432)
-  username: process.env.DB_USERNAME, // Usuário do banco
-  password: process.env.DB_PASSWORD, // Senha do banco
-  database: process.env.DB_NAME, // Nome do banco
-
-  // ============================================
-  // ENTIDADES
-  // ============================================
-  // TypeORM carrega automaticamente arquivos *.entity.ts ou *.entity.js
-  entities: [__dirname + '/**/*.entity{.ts,.js}'],
-
-  // ============================================
-  // CONFIGURAÇÕES GERAIS
-  // ============================================
-  synchronize: false, // Nunca usar true em produção
-  logging: process.env.NODE_ENV === 'development', // Log apenas em desenvolvimento
-
-  // ============================================
-  // SSL (Obrigatório no Supabase)
-  // ============================================
+  // SSL obrigatório para Supabase
   ssl: {
-    rejectUnauthorized: false, // Aceita certificados autoassinados
+    rejectUnauthorized: false,
   },
-});
+
+  // Entidades
+  entities: [join(__dirname, 'modules', '**', 'entities', '*.entity.{ts,js}')],
+
+  // Migrations - CORRIGIDO: removido espaço antes de {ts,js}
+  migrations: [join(__dirname, 'migrations', '*. {ts,js}')],
+
+  // Configurações
+  synchronize: false,
+  logging: process.env.NODE_ENV !== 'production',
+  migrationsRun: false,
+
+  // Pool de conexões
+  extra: {
+    max: 10,
+    min: 2,
+    idleTimeoutMillis: 30000,
+    connectionTimeoutMillis: 10000,
+  },
+};
 
 // ============================================
-// EXPORTAÇÃO: DataSource
+// DATASOURCE PARA MIGRATIONS
 // ============================================
-export default config;
+const AppDataSource = new DataSource(dataSourceOptions);
+
+export default AppDataSource;

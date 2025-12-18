@@ -1,57 +1,74 @@
 // ============================================
-// DTO: CRIAR ENDEREÇO
-// ============================================
-// Representa os dados necessários para cadastrar um novo endereço
-// de entrega do cliente.
+// DTO:  CREATE ADDRESS
+// CORREÇÃO: Aceitar string no campo number
 // ============================================
 
 import {
   IsString,
   IsOptional,
   IsBoolean,
-  Length,
-  Matches,
+  MaxLength,
+  IsNotEmpty,
 } from 'class-validator';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 
 export class CreateAddressDto {
-  // Nome da rua
+  @ApiProperty({ example: 'Rua das Flores' })
   @IsString()
+  @IsNotEmpty({ message: 'Rua é obrigatória' })
+  @MaxLength(255)
   street: string;
 
-  // Número da residência ou estabelecimento
+  @ApiProperty({ example: '123' })
   @IsString()
+  @IsNotEmpty({ message: 'Número é obrigatório' })
+  @MaxLength(20)
   number: string;
 
-  // Complemento (ex.: apartamento, bloco) - opcional
-  @IsOptional()
+  @ApiPropertyOptional({ example: 'Apto 101' })
   @IsString()
+  @IsOptional()
+  @MaxLength(100)
   complement?: string;
 
-  // Bairro
+  @ApiProperty({ example: 'Centro' })
   @IsString()
+  @IsNotEmpty({ message: 'Bairro é obrigatório' })
+  @MaxLength(100)
   neighborhood: string;
 
-  // Cidade
+  @ApiProperty({ example: 'Montes Claros' })
   @IsString()
+  @IsNotEmpty({ message: 'Cidade é obrigatória' })
+  @MaxLength(100)
   city: string;
 
-  // Estado (UF com 2 caracteres, ex.: SP, MG)
+  @ApiProperty({ example: 'MG' })
   @IsString()
-  @Length(2, 2)
+  @IsNotEmpty({ message: 'Estado é obrigatório' })
+  @MaxLength(2)
   state: string;
 
-  // CEP (formato válido: xxxxx-xxx ou xxxxxxxx)
+  @ApiProperty({ example: '39400-000' })
   @IsString()
-  @Matches(/^\d{5}-?\d{3}$/)
+  @IsNotEmpty({ message: 'CEP é obrigatório' })
+  @MaxLength(10)
   zip_code: string;
 
-  // Referência adicional para entrega (opcional)
-  @IsOptional()
+  @ApiPropertyOptional({ example: 'Próximo ao mercado' })
   @IsString()
+  @IsOptional()
+  @MaxLength(255)
   reference?: string;
 
-  // Define se este endereço será o padrão do cliente (opcional)
+  @ApiPropertyOptional({ example: 'Não tocar a campainha' })
+  @IsString()
   @IsOptional()
+  @MaxLength(255)
+  delivery_instructions?: string;
+
+  @ApiPropertyOptional({ example: true })
   @IsBoolean()
+  @IsOptional()
   is_default?: boolean;
 }
