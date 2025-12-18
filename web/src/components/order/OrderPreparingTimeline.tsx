@@ -1,5 +1,5 @@
 // ============================================
-// COMPONENTE: ORDER PREPARING TIMELINE
+// COMPONENTE:  ORDER PREPARING TIMELINE
 // ============================================
 // Exibe a linha do tempo do preparo do pedido.
 // Mostra etapas, status visual e tempo estimado.
@@ -58,7 +58,7 @@ export const OrderPreparingTimeline: React.FC<OrderPreparingTimelineProps> = ({
   const [timeRemaining, setTimeRemaining] = useState(estimatedTime);
 
   // ============================================
-  // FUNÇÃO: DETERMINAR STATUS DA ETAPA
+  // FUNÇÃO:  DETERMINAR STATUS DA ETAPA
   // ============================================
   // Retorna o status da etapa baseado em uma condição
   const getStepStatus = (
@@ -120,7 +120,7 @@ export const OrderPreparingTimeline: React.FC<OrderPreparingTimelineProps> = ({
       {
         id: "delivered",
         label: "Entregue",
-        description: "Aproveite sua pizza!",
+        description: "Aproveite sua pizza! ",
         icon: <MapPin className="w-6 h-6" />,
         status: getStepStatus(
           orderStatus === "delivered",
@@ -134,7 +134,7 @@ export const OrderPreparingTimeline: React.FC<OrderPreparingTimelineProps> = ({
   };
 
   // ============================================
-  // EFEITO: CONTAGEM REGRESSIVA DO TEMPO ESTIMADO
+  // EFEITO:  CONTAGEM REGRESSIVA DO TEMPO ESTIMADO
   // ============================================
   useEffect(() => {
     // Não executa se pedido já foi entregue
@@ -156,10 +156,12 @@ export const OrderPreparingTimeline: React.FC<OrderPreparingTimelineProps> = ({
       {/* CABEÇALHO DO COMPONENTE */}
       <div className="mb-6">
         <h3 className="text-xl font-bold text-gray-800">
-          {orderStatus === "delivered"
-            ? "✓ Pedido Entregue"
-            : "Acompanhando seu pedido"}
-          {/* Título padrão durante o progresso */}
+          {/* 🔧 CORREÇÃO: Movido o comentário para dentro das chaves JSX */}
+          {
+            orderStatus === "delivered"
+              ? "✓ Pedido Entregue" /* Título exibido quando pedido foi entregue */
+              : "Acompanhando seu pedido" /* Título padrão durante o progresso */
+          }
         </h3>
 
         {/* Número do pedido (opcional) */}
@@ -171,8 +173,7 @@ export const OrderPreparingTimeline: React.FC<OrderPreparingTimelineProps> = ({
       <div className="space-y-4">
         {steps.map((step, index) => (
           <div key={step.id} className="flex gap-4">
-            {/* ÍCONE E LINHA
-            CONECTORA */}
+            {/* ÍCONE E LINHA CONECTORA */}
             <div className="flex flex-col items-center">
               {/* ÍCONE DA ETAPA */}
               <div
@@ -260,7 +261,7 @@ export const OrderPreparingTimeline: React.FC<OrderPreparingTimelineProps> = ({
           <div className="bg-purple-50 rounded-lg p-3 flex gap-3">
             <Truck className="w-5 h-5 text-purple-600 flex-shrink-0" />
             <div className="text-sm text-purple-900">
-              <p className="font-semibold">Seu motoboy está a caminho!</p>
+              <p className="font-semibold">Seu motoboy está a caminho! </p>
               <p className="text-xs mt-1">
                 Tempo estimado de chegada: {timeRemaining} min
               </p>
