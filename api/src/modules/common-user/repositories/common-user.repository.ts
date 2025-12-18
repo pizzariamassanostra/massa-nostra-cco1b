@@ -91,8 +91,8 @@ export class CommonUserRepository {
       );
     }
 
-    if (options.with_password_hash) {
-      qb.addSelect('common_users.password_hash');
+    if (options.with_password) {
+      qb.addSelect('common_users.password');
     }
 
     if (options.where && options.where.length > 0) {

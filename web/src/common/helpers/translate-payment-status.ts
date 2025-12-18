@@ -1,28 +1,32 @@
 // ============================================
-// FUNÇÕES: TRADUÇÃO DE STATUS DE PAGAMENTO
-// ============================================
-// Fornece utilitários para:
-// - Traduzir status de pagamento (enum) para texto em português.
-// - Definir classes de cor (Tailwind) para badges de status.
+// FUNÇÕES UTILITÁRIAS: STATUS DE PAGAMENTO
 // ============================================
 
 import { PaymentStatus } from "../enum/payment-status.enum";
 
-// Retorna o texto em português correspondente ao status
+// ============================================
+// FUNÇÃO: translatePaymentStatus
+// ============================================
+// Retorna a descrição em português do status de pagamento
+// ============================================
 export function translatePaymentStatus(status: PaymentStatus): string {
   const translations: Record<PaymentStatus, string> = {
-    [PaymentStatus.PENDING]: "Aguardando Pagamento",
-    [PaymentStatus.APPROVED]: "Pago",
-    [PaymentStatus.REJECTED]: "Recusado",
-    [PaymentStatus.CANCELLED]: "Cancelado",
-    [PaymentStatus.REFUNDED]: "Reembolsado",
+    [PaymentStatus.PENDING]: "Aguardando Pagamento", // Pagamento pendente
+    [PaymentStatus.APPROVED]: "Pago", // Pagamento aprovado
+    [PaymentStatus.REJECTED]: "Recusado", // Pagamento recusado
+    [PaymentStatus.CANCELLED]: "Cancelado", // Pagamento cancelado
+    [PaymentStatus.REFUNDED]: "Reembolsado", // Pagamento reembolsado
   };
 
-  // Caso não exista tradução, retorna o próprio status
+  // Retorna a tradução correspondente ou o próprio status como fallback
   return translations[status] || status;
 }
 
-// Retorna classes de cor para estilização do badge
+// ============================================
+// FUNÇÃO: getPaymentStatusColor
+// ============================================
+// Retorna classes CSS de cor conforme o status de pagamento
+// ============================================
 export function getPaymentStatusColor(status: PaymentStatus): string {
   const colors: Record<PaymentStatus, string> = {
     [PaymentStatus.PENDING]: "bg-yellow-100 text-yellow-800", // Em espera
@@ -32,6 +36,6 @@ export function getPaymentStatusColor(status: PaymentStatus): string {
     [PaymentStatus.REFUNDED]: "bg-blue-100 text-blue-800", // Reembolsado
   };
 
-  // Caso não exista cor definida, usa padrão cinza
+  // Retorna a cor correspondente ou uma cor padrão
   return colors[status] || "bg-gray-100 text-gray-800";
 }

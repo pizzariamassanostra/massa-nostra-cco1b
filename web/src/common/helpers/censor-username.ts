@@ -1,9 +1,8 @@
 // ============================================
 // FUNÇÃO: CENSOR USERNAME
 // ============================================
-// Censura partes do nome de usuário, mantendo apenas
-// o primeiro e o último nome visíveis.
-// - Exemplo: "Lucas da Silva Pereira" → "Lucas *** Pereira"
+// Censura partes intermediárias do nome do usuário
+// Mantém o primeiro e o último nome visíveis
 // ============================================
 
 export const censorUsername = (username: string): string => {
@@ -11,13 +10,15 @@ export const censorUsername = (username: string): string => {
   const usernameArray = username.trim().split(" ");
   let censoredArray: string[] = [];
 
-  // Itera sobre cada palavra do nome
+  // ============================================
+  // PROCESSAMENTO: Censura das palavras intermediárias
+  // ============================================
   usernameArray?.forEach((word, index) => {
     // Mantém primeira e última palavra sem censura
     if ([usernameArray.length - 1, 0].includes(index)) {
       censoredArray.push(word);
     } else {
-      // Substitui cada letra por "*"
+      // Substitui cada letra da palavra por "*"
       censoredArray.push(
         word
           .split("")
@@ -27,6 +28,9 @@ export const censorUsername = (username: string): string => {
     }
   });
 
-  // Junta novamente em uma string
+  // ============================================
+  // RETORNO
+  // ============================================
+  // Junta novamente as palavras em uma string
   return censoredArray.join(" ");
 };

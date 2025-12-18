@@ -1,9 +1,8 @@
 // ============================================
 // COMPONENTE: DRAWER DO CARRINHO
 // ============================================
-// Drawer lateral que exibe itens do carrinho
-// Abre/fecha com animação
-// Mostra resumo e botão para checkout
+// Responsável por exibir o carrinho em formato de drawer lateral
+// Lista itens adicionados, resumo e botão para checkout
 // ============================================
 
 import React from "react";
@@ -13,25 +12,42 @@ import CartItem from "./CartItem";
 import CartSummary from "./CartSummary";
 import { useRouter } from "next/router";
 
+// ============================================
+// COMPONENTE: CartDrawer
+// ============================================
 const CartDrawer: React.FC = () => {
+  // ============================================
+  // CONTEXTO DO CARRINHO
+  // ============================================
   const { items, isOpen, closeCart, totalItems } = useCart();
+
+  // ============================================
+  // ROTEAMENTO
+  // ============================================
   const router = useRouter();
 
   // ============================================
-  // IR PARA CHECKOUT
+  // FUNÇÃO: Ir para checkout
   // ============================================
+  // Fecha o drawer e redireciona para a página de checkout
   const handleCheckout = () => {
     closeCart();
     router.push("/checkout");
   };
 
-  // Se não estiver aberto, não renderiza nada
+  // ============================================
+  // CONTROLE DE RENDERIZAÇÃO
+  // ============================================
+  // Não renderiza nada se o drawer estiver fechado
   if (!isOpen) return null;
 
+  // ============================================
+  // RENDERIZAÇÃO
+  // ============================================
   return (
     <>
       {/* ============================================ */}
-      {/* OVERLAY (FUNDO ESCURO) */}
+      {/* OVERLAY - FUNDO ESCURO */}
       {/* ============================================ */}
       <div
         className="fixed inset-0 bg-black bg-opacity-50 z-40 transition-opacity"
@@ -39,7 +55,7 @@ const CartDrawer: React.FC = () => {
       />
 
       {/* ============================================ */}
-      {/* DRAWER (PAINEL LATERAL) */}
+      {/* DRAWER - PAINEL LATERAL */}
       {/* ============================================ */}
       <div className="fixed right-0 top-0 h-full w-full max-w-md bg-white shadow-xl z-50 transform transition-transform duration-300 ease-in-out flex flex-col">
         {/* ============================================ */}
@@ -53,7 +69,7 @@ const CartDrawer: React.FC = () => {
             </h2>
           </div>
 
-          {/* Botão fechar */}
+          {/* BOTÃO FECHAR DRAWER */}
           <button
             onClick={closeCart}
             className="p-2 hover:bg-gray-100 rounded-full transition-colors"
@@ -64,18 +80,22 @@ const CartDrawer: React.FC = () => {
         </div>
 
         {/* ============================================ */}
-        {/* CONTEÚDO (LISTA DE ITENS) */}
+        {/* CONTEÚDO - LISTA DE ITENS */}
         {/* ============================================ */}
         <div className="flex-1 overflow-y-auto p-4">
           {items.length === 0 ? (
-            // Carrinho vazio
+            // ============================================
+            // ESTADO: CARRINHO VAZIO
+            // ============================================
             <div className="flex flex-col items-center justify-center h-full text-gray-400">
               <ShoppingCart className="w-24 h-24 mb-4" />
               <p className="text-lg">Seu carrinho está vazio</p>
-              <p className="text-sm">Adicione pizzas deliciosas! </p>
+              <p className="text-sm">Adicione pizzas deliciosas!</p>
             </div>
           ) : (
-            // Lista de itens
+            // ============================================
+            // LISTA DE ITENS DO CARRINHO
+            // ============================================
             <div className="space-y-4">
               {items.map((item) => (
                 <CartItem key={item.id} item={item} />
@@ -85,14 +105,14 @@ const CartDrawer: React.FC = () => {
         </div>
 
         {/* ============================================ */}
-        {/* FOOTER (RESUMO E BOTÃO) */}
+        {/* FOOTER - RESUMO E AÇÃO */}
         {/* ============================================ */}
         {items.length > 0 && (
           <div className="border-t p-4 space-y-4">
-            {/* Resumo de valores */}
+            {/* RESUMO DOS VALORES */}
             <CartSummary />
 
-            {/* Botão finalizar pedido */}
+            {/* BOTÃO FINALIZAR PEDIDO */}
             <button
               onClick={handleCheckout}
               className="w-full bg-red-600 text-white py-3 px-4 rounded-lg font-semibold hover:bg-red-700 transition-colors"

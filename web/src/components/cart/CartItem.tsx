@@ -1,9 +1,8 @@
 // ============================================
 // COMPONENTE: ITEM DO CARRINHO
 // ============================================
-// Exibe um item do carrinho com imagem, nome, preço
-// Botões para aumentar/diminuir quantidade
-// Botão para remover
+// Responsável por exibir um item individual do carrinho
+// Permite alterar quantidade e remover o produto
 // ============================================
 
 import React from "react";
@@ -12,15 +11,24 @@ import { useCart } from "@/contexts/CartContext";
 import { Minus, Plus, Trash2 } from "lucide-react";
 import Image from "next/image";
 
+// ============================================
+// INTERFACE DE PROPS
+// ============================================
 interface CartItemProps {
-  item: CartItemType;
+  item: CartItemType; // Item do carrinho
 }
 
+// ============================================
+// COMPONENTE: CartItem
+// ============================================
 const CartItem: React.FC<CartItemProps> = ({ item }) => {
+  // ============================================
+  // CONTEXTO DO CARRINHO
+  // ============================================
   const { updateQuantity, removeItem } = useCart();
 
   // ============================================
-  // FORMATAR PREÇO
+  // FUNÇÃO: Formatar preço em Real (BRL)
   // ============================================
   const formatPrice = (price: number) => {
     return new Intl.NumberFormat("pt-BR", {
@@ -30,30 +38,34 @@ const CartItem: React.FC<CartItemProps> = ({ item }) => {
   };
 
   // ============================================
-  // AUMENTAR QUANTIDADE
+  // FUNÇÃO: Aumentar quantidade do item
   // ============================================
   const handleIncrease = () => {
     updateQuantity(item.id, item.quantity + 1);
   };
 
   // ============================================
-  // DIMINUIR QUANTIDADE
+  // FUNÇÃO: Diminuir quantidade do item
   // ============================================
   const handleDecrease = () => {
     if (item.quantity > 1) {
       updateQuantity(item.id, item.quantity - 1);
     } else {
+      // Remove item caso quantidade chegue a zero
       removeItem(item.id);
     }
   };
 
   // ============================================
-  // REMOVER ITEM
+  // FUNÇÃO: Remover item do carrinho
   // ============================================
   const handleRemove = () => {
     removeItem(item.id);
   };
 
+  // ============================================
+  // RENDERIZAÇÃO
+  // ============================================
   return (
     <div className="flex gap-4 p-4 bg-gray-50 rounded-lg">
       {/* ============================================ */}
@@ -68,7 +80,7 @@ const CartItem: React.FC<CartItemProps> = ({ item }) => {
             className="object-cover"
           />
         ) : (
-          // Placeholder se não tiver imagem
+          // Placeholder quando não há imagem
           <div className="w-full h-full flex items-center justify-center text-gray-400">
             🍕
           </div>
@@ -79,20 +91,20 @@ const CartItem: React.FC<CartItemProps> = ({ item }) => {
       {/* INFORMAÇÕES DO PRODUTO */}
       {/* ============================================ */}
       <div className="flex-1">
-        {/* Nome do produto */}
+        {/* NOME DO PRODUTO */}
         <h3 className="font-semibold text-gray-800">{item.product_name}</h3>
 
-        {/* Tamanho */}
+        {/* VARIANTE / TAMANHO */}
         <p className="text-sm text-gray-600">{item.variant_label}</p>
 
-        {/* Borda (se tiver) */}
+        {/* BORDA (SE EXISTIR) */}
         {item.crust_name && (
           <p className="text-xs text-gray-500">
             Borda: {item.crust_name} (+{formatPrice(item.crust_price)})
           </p>
         )}
 
-        {/* Recheio (se tiver) */}
+        {/* RECHEIO (SE EXISTIR) */}
         {item.filling_name && (
           <p className="text-xs text-gray-500">
             Recheio: {item.filling_name} (+{formatPrice(item.filling_price)})
@@ -103,7 +115,7 @@ const CartItem: React.FC<CartItemProps> = ({ item }) => {
         {/* CONTROLES DE QUANTIDADE E PREÇO */}
         {/* ============================================ */}
         <div className="flex items-center justify-between mt-2">
-          {/* Botões de quantidade */}
+          {/* CONTROLE DE QUANTIDADE */}
           <div className="flex items-center gap-2">
             <button
               onClick={handleDecrease}
@@ -126,7 +138,7 @@ const CartItem: React.FC<CartItemProps> = ({ item }) => {
             </button>
           </div>
 
-          {/* Preço total do item */}
+          {/* PREÇO TOTAL DO ITEM */}
           <span className="font-bold text-red-600">
             {formatPrice(item.total_price)}
           </span>
@@ -134,7 +146,7 @@ const CartItem: React.FC<CartItemProps> = ({ item }) => {
       </div>
 
       {/* ============================================ */}
-      {/* BOTÃO REMOVER */}
+      {/* BOTÃO REMOVER ITEM */}
       {/* ============================================ */}
       <button
         onClick={handleRemove}

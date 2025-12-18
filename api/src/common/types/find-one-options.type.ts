@@ -12,7 +12,7 @@ export type FindOneOptions<T> = {
   relations?: string[];
 
   // Incluir hash de senha (apenas para login)
-  with_password_hash?: boolean;
+  with_password?: boolean;
 
   // Campos adicionais para SELECT
   additionalSelects?: string[];

@@ -1,12 +1,10 @@
 // ============================================
-// INTERFACES: PRODUTO E RELACIONADOS
-// ============================================
-// Define a estrutura de dados de um produto (pizza, bebida, sobremesa),
-// incluindo categorias, variantes, bordas e recheios.
-// Essas interfaces estão sincronizadas com a API NestJS.
+// MODELOS / INTERFACES: PRODUTOS E RELACIONADOS
 // ============================================
 
-// Produto principal
+// ============================================
+// INTERFACE: Product (Produto principal)
+// ============================================
 export interface Product {
   id: number;
   category_id: number; // ID da categoria associada
@@ -22,23 +20,27 @@ export interface Product {
 
   // Relações
   category?: ProductCategory; // Categoria associada
-  variants?: ProductVariant[]; // Lista de variantes (tamanhos, preços)
+  variants?: ProductVariant[]; // Variantes (tamanhos, preços)
 }
 
-// Categoria de produto
+// ============================================
+// INTERFACE: ProductCategory (Categoria do produto)
+// ============================================
 export interface ProductCategory {
   id: number;
   name: string; // Nome da categoria
   slug: string; // Identificador único
   description: string; // Descrição da categoria
   image_url: string | null; // Imagem ilustrativa
-  status: "active" | "inactive";
-  sort_order: number;
-  created_at: string;
-  updated_at: string;
+  status: "active" | "inactive"; // Disponibilidade
+  sort_order: number; // Ordem de exibição
+  created_at: string; // Data de criação
+  updated_at: string; // Data de atualização
 }
 
-// Variante de produto (ex.: pizza pequena, média, grande)
+// ============================================
+// INTERFACE: ProductVariant (Variação do produto)
+// ============================================
 export interface ProductVariant {
   id: number;
   product_id: number; // ID do produto associado
@@ -46,34 +48,38 @@ export interface ProductVariant {
   label: string; // Rótulo (ex.: "Pizza Grande")
   price: string; // Preço em decimal como string (ex: "2500.00" = R$ 25,00)
   servings: number; // Quantidade de porções
-  sort_order: number;
-  status: "active" | "inactive";
-  created_at: string;
-  updated_at: string;
+  sort_order: number; // Ordem de exibição
+  status: "active" | "inactive"; // Disponibilidade
+  created_at: string; // Data de criação
+  updated_at: string; // Data de atualização
 }
 
-// Borda da pizza
+// ============================================
+// INTERFACE: Crust (Borda da pizza)
+// ============================================
 export interface Crust {
   id: number;
   name: string; // Nome da borda
   slug: string; // Identificador único
   description: string; // Descrição da borda
   price_modifier: string; // Valor adicional (ex: "800.00" = R$ 8,00)
-  status: "active" | "inactive";
-  sort_order: number;
-  created_at: string;
-  updated_at: string;
+  status: "active" | "inactive"; // Disponibilidade
+  sort_order: number; // Ordem de exibição
+  created_at: string; // Data de criação
+  updated_at: string; // Data de atualização
 }
 
-// Recheio adicional
+// ============================================
+// INTERFACE: Filling (Recheio adicional)
+// ============================================
 export interface Filling {
   id: number;
   name: string; // Nome do recheio
   slug: string; // Identificador único
   description: string; // Descrição do recheio
   price_modifier: string; // Valor adicional (ex: "500.00" = R$ 5,00)
-  status: "active" | "inactive";
-  sort_order: number;
-  created_at: string;
-  updated_at: string;
+  status: "active" | "inactive"; // Disponibilidade
+  sort_order: number; // Ordem de exibição
+  created_at: string; // Data de criação
+  updated_at: string; // Data de atualização
 }

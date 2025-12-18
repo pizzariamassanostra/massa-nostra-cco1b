@@ -1,5 +1,5 @@
 // ============================================
-// INTERFACES: PRODUCT CATEGORY, VARIANT & PIZZA OPTIONS
+// INTERFACES: PRODUTO, CATEGORIA, VARIANTE, PIZZA OPÇÕES
 // ============================================
 // Define estruturas de dados retornadas pela API para:
 // - Categorias de produtos

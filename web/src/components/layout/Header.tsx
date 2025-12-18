@@ -1,9 +1,9 @@
 // ============================================
 // COMPONENTE: HEADER DO SITE
 // ============================================
-// Barra superior com logo, menu e carrinho
-// Mostra quantidade de itens no carrinho
-// Botão de login/perfil
+// Cabeçalho principal da aplicação
+// Exibe logo, navegação, carrinho e ações do usuário
+// Integra autenticação e estado do carrinho
 // ============================================
 
 import React from "react";
@@ -13,6 +13,10 @@ import { ShoppingCart, User, Menu, LogOut } from "lucide-react";
 import { useRouter } from "next/router";
 import Link from "next/link";
 import Image from "next/image";
+
+// ============================================
+// COMPONENTE: Header
+// ============================================
 
 const Header: React.FC = () => {
   const { isAuthenticated, user, logout } = useAuth();
@@ -85,10 +89,12 @@ const Header: React.FC = () => {
           </nav>
 
           {/* ============================================ */}
-          {/* AÇÕES (Carrinho, Login/Perfil) */}
+          {/* AÇÕES (CARRINHO E USUÁRIO) */}
           {/* ============================================ */}
           <div className="flex items-center gap-4">
-            {/* Botão do Carrinho */}
+            {/* ============================================ */}
+            {/* BOTÃO DO CARRINHO */}
+            {/* ============================================ */}
             <button
               onClick={openCart}
               className="relative p-2 hover:bg-gray-100 rounded-full transition-colors"
@@ -96,7 +102,7 @@ const Header: React.FC = () => {
             >
               <ShoppingCart className="w-6 h-6 text-gray-700" />
 
-              {/* Badge com quantidade */}
+              {/* Badge com quantidade de itens */}
               {totalItems > 0 && (
                 <span className="absolute -top-1 -right-1 bg-red-600 text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center">
                   {totalItems}
@@ -104,7 +110,9 @@ const Header: React.FC = () => {
               )}
             </button>
 
-            {/* Botão Login/Perfil */}
+            {/* ============================================ */}
+            {/* LOGIN OU PERFIL DO USUÁRIO */}
+            {/* ============================================ */}
             {isAuthenticated ? (
               <div className="relative group">
                 <button className="flex items-center gap-2 p-2 hover:bg-gray-100 rounded-lg transition-colors">
@@ -114,7 +122,9 @@ const Header: React.FC = () => {
                   </span>
                 </button>
 
-                {/* Dropdown Menu */}
+                {/* ============================================ */}
+                {/* DROPDOWN DO USUÁRIO */}
+                {/* ============================================ */}
                 <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg py-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all">
                   <button
                     onClick={handleProfile}
@@ -122,13 +132,16 @@ const Header: React.FC = () => {
                   >
                     Meu Perfil
                   </button>
+
                   <button
                     onClick={() => router.push("/meus-pedidos")}
                     className="w-full px-4 py-2 text-left hover:bg-gray-100 transition-colors"
                   >
                     Meus Pedidos
                   </button>
+
                   <hr className="my-2" />
+
                   <button
                     onClick={handleLogout}
                     className="w-full px-4 py-2 text-left text-red-600 hover:bg-red-50 transition-colors flex items-center gap-2"
@@ -152,5 +165,9 @@ const Header: React.FC = () => {
     </header>
   );
 };
+
+// ============================================
+// EXPORTAÇÃO
+// ============================================
 
 export default Header;

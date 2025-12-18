@@ -1,12 +1,10 @@
-/**
- * ============================================
- * PÁGINA: MEUS PEDIDOS
- * ============================================
- * Listagem de todos os pedidos do cliente
- * Acompanhamento em tempo real com WebSocket
- * Atualização automática de status
- * ============================================
- */
+// ============================================
+// PÁGINA: MEUS PEDIDOS
+// ============================================
+// Listagem de todos os pedidos do cliente
+// Acompanhamento em tempo real com WebSocket
+// Atualização automática de status
+// ============================================
 
 import React, { useEffect, useState, useRef } from "react";
 import { useRouter } from "next/router";
@@ -29,7 +27,9 @@ export default function MyOrdersPage() {
   const { isAuthenticated, user } = useAuth();
 
   // ============================================
-  // WEBSOCKET: Chamar NO TOPO do componente (CORRETO!)
+  // WEBSOCKET
+  // ============================================
+  // Deve ser chamado no topo do componente
   // ============================================
   const {
     isConnected,
@@ -44,13 +44,16 @@ export default function MyOrdersPage() {
   // ============================================
   // ESTADOS
   // ============================================
-  // Usar a interface Order do service diretamente
+  // Controle da lista de pedidos, loading e filtro
+  // ============================================
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedStatus, setSelectedStatus] = useState<string>("all");
 
   // ============================================
-  // REFS: Evitar processamento duplicado de notificações
+  // REFS
+  // ============================================
+  // Evitam processamento duplicado de notificações
   // ============================================
   const lastProcessedPreparingRef = useRef<number | null>(null);
   const lastProcessedDeliveryRef = useRef<number | null>(null);
@@ -59,10 +62,8 @@ export default function MyOrdersPage() {
   // ============================================
   // FUNÇÃO: Carregar pedidos
   // ============================================
-  /**
-   * Busca todos os pedidos do usuário logado
-   * Retorna lista com todos os campos necessários
-   */
+  // Busca todos os pedidos do usuário autenticado
+  // ============================================
   const loadOrders = async () => {
     try {
       setLoading(true);
@@ -77,24 +78,19 @@ export default function MyOrdersPage() {
   };
 
   // ============================================
-  // FUNÇÃO: Atualizar lista de pedidos (refetch)
+  // FUNÇÃO: Recarregar pedidos
   // ============================================
-  /**
-   * Recarrega a lista de pedidos do servidor
-   * Utilitário para sincronizar com WebSocket
-   */
+  // Utilizada para sincronização com WebSocket
+  // ============================================
   const refetch = () => {
     loadOrders();
   };
 
   // ============================================
-  // EFEITO: Validar autenticação
+  // EFEITO: Validação de autenticação
   // ============================================
-  /**
-   * Verifica se usuário está autenticado
-   * Se não, redireciona para login
-   * Carrega pedidos quando autenticado
-   */
+  // Redireciona para login se não autenticado
+  // ============================================
   useEffect(() => {
     if (!isAuthenticated) {
       router.push("/login?redirect=/meus-pedidos");
@@ -106,15 +102,10 @@ export default function MyOrdersPage() {
   // ============================================
   // EFEITO: WEBSOCKET - Pedido em preparação
   // ============================================
-  /**
-   * Escuta evento WebSocket quando pedido entra em preparação
-   * Atualiza status localmente
-   * Mostra notificação ao usuário
-   * Usa Ref para evitar processar 2x a mesma notificação
-   */
+  // Atualiza status do pedido e notifica o usuário
+  // ============================================
   useEffect(() => {
     if (orderPreparing && orderPreparing.order_id) {
-      // Evitar processar a mesma notificação 2x
       if (lastProcessedPreparingRef.current === orderPreparing.order_id) {
         return;
       }
@@ -122,7 +113,6 @@ export default function MyOrdersPage() {
       console.log("🟡 Pedido em preparação!", orderPreparing);
       lastProcessedPreparingRef.current = orderPreparing.order_id;
 
-      // Atualizar lista localmente
       setOrders((prevOrders) =>
         prevOrders.map((order) =>
           order.id === orderPreparing.order_id
@@ -131,16 +121,13 @@ export default function MyOrdersPage() {
         )
       );
 
-      // Refetch para garantir sincronismo com backend
       refetch();
 
-      // Notificar usuário
       toast("Seu pedido está sendo preparado! 🍕", {
         icon: "🟡",
         duration: 3000,
       });
 
-      // Limpar após processar
       setTimeout(() => {
         clearOrderPreparing();
         lastProcessedPreparingRef.current = null;
@@ -151,14 +138,10 @@ export default function MyOrdersPage() {
   // ============================================
   // EFEITO: WEBSOCKET - Pedido saiu para entrega
   // ============================================
-  /**
-   * Escuta evento WebSocket quando pedido sai para entrega
-   * Atualiza status e delivery_token
-   * Mostra notificação ao usuário
-   */
+  // Atualiza status e token de entrega
+  // ============================================
   useEffect(() => {
     if (orderOnDelivery && orderOnDelivery.order_id) {
-      // Evitar processar a mesma notificação 2x
       if (lastProcessedDeliveryRef.current === orderOnDelivery.order_id) {
         return;
       }
@@ -166,7 +149,6 @@ export default function MyOrdersPage() {
       console.log("🔵 Saiu para entrega!", orderOnDelivery);
       lastProcessedDeliveryRef.current = orderOnDelivery.order_id;
 
-      // Atualizar lista localmente COM o token de entrega
       setOrders((prevOrders) =>
         prevOrders.map((order) =>
           order.id === orderOnDelivery.order_id
@@ -179,16 +161,13 @@ export default function MyOrdersPage() {
         )
       );
 
-      // Refetch para garantir sincronismo
       refetch();
 
-      // Notificar usuário
-      toast("Seu pedido saiu para entrega! 🏍️", {
+      toast("Seu pedido saiu para entrega!", {
         icon: "🔵",
         duration: 3000,
       });
 
-      // Limpar após processar
       setTimeout(() => {
         clearOrderOnDelivery();
         lastProcessedDeliveryRef.current = null;
@@ -199,22 +178,17 @@ export default function MyOrdersPage() {
   // ============================================
   // EFEITO: WEBSOCKET - Pedido entregue
   // ============================================
-  /**
-   * Escuta evento WebSocket quando pedido é entregue
-   * Atualiza status para "delivered"
-   * Mostra notificação com convite para avaliação
-   */
+  // Atualiza status para entregue e notifica o usuário
+  // ============================================
   useEffect(() => {
     if (orderDelivered && orderDelivered.order_id) {
-      // Evitar processar a mesma notificação 2x
       if (lastProcessedDeliveredRef.current === orderDelivered.order_id) {
         return;
       }
 
-      console.log("✅ Pedido entregue!", orderDelivered);
+      console.log("Pedido entregue!", orderDelivered);
       lastProcessedDeliveredRef.current = orderDelivered.order_id;
 
-      // Atualizar lista localmente
       setOrders((prevOrders) =>
         prevOrders.map((order) =>
           order.id === orderDelivered.order_id
@@ -223,15 +197,12 @@ export default function MyOrdersPage() {
         )
       );
 
-      // Refetch para garantir sincronismo
       refetch();
 
-      // Notificar usuário
-      toast.success("Pedido entregue! Deixe uma avaliação 😊", {
+      toast.success("Pedido entregue! Deixe uma avaliação", {
         duration: 4000,
       });
 
-      // Limpar após processar
       setTimeout(() => {
         clearOrderDelivered();
         lastProcessedDeliveredRef.current = null;
@@ -240,19 +211,19 @@ export default function MyOrdersPage() {
   }, [orderDelivered, clearOrderDelivered]);
 
   // ============================================
-  // FUNÇÃO: Filtrar pedidos por status
+  // FILTRO DE PEDIDOS
   // ============================================
-  /**
-   * Filtra lista de pedidos pelo status selecionado
-   * Se "all", mostra todos os pedidos
-   */
+  // Filtra pedidos pelo status selecionado
+  // ============================================
   const filteredOrders =
     selectedStatus === "all"
       ? orders
       : orders.filter((order) => order.status === selectedStatus);
 
   // ============================================
-  // RENDER: CARREGANDO
+  // RENDER: CARREGAMENTO
+  // ============================================
+  // Exibe loader enquanto os pedidos são carregados
   // ============================================
   if (loading) {
     return (
@@ -272,6 +243,8 @@ export default function MyOrdersPage() {
   // ============================================
   // RENDER: PRINCIPAL
   // ============================================
+  // Exibe cabeçalho, filtros e lista de pedidos
+  // ============================================
   return (
     <>
       <Head>
@@ -279,14 +252,18 @@ export default function MyOrdersPage() {
       </Head>
 
       <div className="container mx-auto px-4 py-8">
+        {/* ============================================ */}
         {/* CABEÇALHO */}
+        {/* ============================================ */}
         <div className="mb-8">
           <h1 className="text-4xl font-bold text-gray-800 mb-2">
             Meus Pedidos
           </h1>
           <p className="text-gray-600">Acompanhe seus pedidos em tempo real</p>
 
+          {/* ============================================ */}
           {/* INDICADOR DE CONEXÃO WEBSOCKET */}
+          {/* ============================================ */}
           <div className="mt-4 flex items-center gap-2">
             <span
               className={`inline-block w-3 h-3 rounded-full ${
@@ -295,13 +272,15 @@ export default function MyOrdersPage() {
             />
             <span className="text-sm text-gray-600">
               {isConnected
-                ? "Recebendo atualizações em tempo real 🔄"
+                ? "Recebendo atualizações em tempo real"
                 : "Conectando..."}
             </span>
           </div>
         </div>
 
+        {/* ============================================ */}
         {/* FILTROS POR STATUS */}
+        {/* ============================================ */}
         <div className="mb-6 flex gap-2 flex-wrap">
           <button
             onClick={() => setSelectedStatus("all")}
@@ -365,7 +344,9 @@ export default function MyOrdersPage() {
           </button>
         </div>
 
+        {/* ============================================ */}
         {/* LISTA DE PEDIDOS */}
+        {/* ============================================ */}
         {filteredOrders.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {filteredOrders.map((order) => (

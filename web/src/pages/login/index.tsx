@@ -1,3 +1,11 @@
+// ============================================
+// PÁGINA: LOGIN
+// ============================================
+// Página responsável por autenticar o usuário.
+// Caso já esteja logado, redireciona para o cardápio.
+// Possui campos para email/telefone e senha, com toggle de visibilidade.
+// ============================================
+
 import { useState, useEffect } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useRouter } from "next/router";
@@ -6,29 +14,41 @@ import Head from "next/head";
 import { Eye, EyeOff } from "lucide-react";
 
 export default function LoginPage() {
+  // ============================================
+  // CONTEXTOS E HOOKS
+  // ============================================
   const { login, isAuthenticated } = useAuth();
   const router = useRouter();
 
+  // ============================================
+  // ESTADOS LOCAIS
+  // ============================================
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
 
+  // ============================================
+  // REDIRECIONAMENTO SE AUTENTICADO
+  // ============================================
   useEffect(() => {
     if (isAuthenticated) {
       router.push("/cardapio");
     }
   }, [isAuthenticated, router]);
 
+  // ============================================
+  // FUNÇÃO DE SUBMISSÃO DO FORMULÁRIO
+  // ============================================
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
 
-    console.log("Tentando fazer login... ", { username });
+    console.log("Tentando fazer login...", { username });
 
     try {
       await login({ username, password });
-      console.log("Login bem-sucedido!  ");
+      console.log("Login bem-sucedido!");
     } catch (error: any) {
       console.error("Erro no login:", error);
       if (error?.response?.data) {
@@ -39,14 +59,20 @@ export default function LoginPage() {
     }
   };
 
+  // ============================================
+  // RENDER
+  // ============================================
   return (
     <>
+      {/* Cabeçalho da página */}
       <Head>
         <title>Login - Pizzaria Massa Nostra</title>
       </Head>
 
+      {/* Container centralizado */}
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-red-600 to-red-700 px-4">
         <div className="bg-white rounded-lg shadow-xl p-8 w-full max-w-md">
+          {/* Logo e título */}
           <div className="text-center mb-8">
             <div className="w-20 h-20 bg-red-600 rounded-full flex items-center justify-center text-4xl mx-auto mb-4">
               🍕
@@ -55,7 +81,9 @@ export default function LoginPage() {
             <p className="text-gray-600 mt-2">Faça login para continuar</p>
           </div>
 
+          {/* Formulário de login */}
           <form onSubmit={handleSubmit} className="space-y-6">
+            {/* Campo: Email ou Telefone */}
             <div>
               <label
                 htmlFor="username"
@@ -74,6 +102,7 @@ export default function LoginPage() {
               />
             </div>
 
+            {/* Campo: Senha */}
             <div>
               <label
                 htmlFor="password"
@@ -91,6 +120,7 @@ export default function LoginPage() {
                   placeholder="••••••••"
                   required
                 />
+                {/* Toggle de visibilidade da senha */}
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
@@ -105,6 +135,7 @@ export default function LoginPage() {
               </div>
             </div>
 
+            {/* Botão de login */}
             <button
               type="submit"
               disabled={loading}
@@ -114,6 +145,7 @@ export default function LoginPage() {
             </button>
           </form>
 
+          {/* Links auxiliares */}
           <div className="mt-6 text-center space-y-3">
             <p className="text-gray-600">
               Não tem uma conta?{" "}

@@ -1,22 +1,25 @@
 // ============================================
-// FUNÇÃO: TRANSLATE SORT
-// ============================================
-// Função utilitária para traduzir uma chave em índice de array.
-// - Recebe uma `key` (do React, geralmente string ou número).
-// - Se for string no formato "algumaCoisa.index", extrai o índice.
-// - Retorna o elemento correspondente no array.
-// - Caso a key não seja string, retorna o primeiro elemento.
+// FUNÇÃO UTILITÁRIA: TRANSLATE SORT
 // ============================================
 
 import { Key } from "react";
 
+// ============================================
+// FUNÇÃO: translateSort
+// ============================================
+// Converte a chave de ordenação (ex: "table.2")
+// em um valor correspondente dentro do array
+// ============================================
 export default function translateSort(key: Key | undefined, array: any[]): any {
+  // Verifica se a chave é uma string válida
   if (typeof key === "string") {
-    // Divide a string pela "." e pega a segunda parte como índice
+    // Divide a string pelo "." e utiliza a segunda parte como índice
     const index = parseInt(key.split(".")[1]);
+
+    // Retorna o valor do array correspondente ao índice
     return array[index];
   }
 
-  // Se não for string, retorna o primeiro elemento do array
+  // Fallback: retorna o primeiro elemento do array
   return array[0];
 }

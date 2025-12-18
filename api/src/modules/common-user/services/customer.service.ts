@@ -102,13 +102,13 @@ export class CustomerService {
     newUser.phone_alternative =
       dto.phone_alternative?.replace(/\D/g, '') || null;
     newUser.email = dto.email?.toLowerCase() || null;
-    newUser.password_hash = passwordHash;
+    newUser.password = passwordHash;
     newUser.accept_terms = dto.accept_terms;
     newUser.accept_promotions = dto.accept_promotions || false;
 
     const savedUser = await this.userRepository.create(newUser);
 
-    delete savedUser.password_hash;
+    delete savedUser.password;
     return savedUser;
   }
 
@@ -124,14 +124,14 @@ export class CustomerService {
 
     const user = await this.userRepository.findOne({
       where: [{ email: username.toLowerCase() }, { phone: formattedPhone }],
-      with_password_hash: true,
+      with_password: true,
     });
 
     if (!user) {
       throw new UnauthorizedException('Email/telefone ou senha incorretos');
     }
 
-    if (!user.password_hash) {
+    if (!user.password) {
       throw new UnauthorizedException(
         'Usuário sem senha cadastrada. Por favor, redefina sua senha.',
       );
@@ -139,7 +139,7 @@ export class CustomerService {
 
     const isPasswordValid = await validatePassword(
       password,
-      user.password_hash,
+      user.password,
     );
 
     if (!isPasswordValid) {
@@ -148,7 +148,7 @@ export class CustomerService {
 
     const access_token = this.generateToken(user);
 
-    delete user.password_hash;
+    delete user.password;
     return { user, access_token };
   }
 
@@ -164,7 +164,7 @@ export class CustomerService {
       throw new ApiError('user-not-found', 'Usuário não encontrado', 404);
     }
 
-    delete user.password_hash;
+    delete user.password;
     return user;
   }
 
@@ -202,12 +202,12 @@ export class CustomerService {
     }
 
     if (dto.password) {
-      updateData.password_hash = await hashPassword(dto.password);
+      updateData.password = await hashPassword(dto.password);
     }
 
     const updatedUser = await this.userRepository.update(userId, updateData);
 
-    delete updatedUser.password_hash;
+    delete updatedUser.password;
     return updatedUser;
   }
 

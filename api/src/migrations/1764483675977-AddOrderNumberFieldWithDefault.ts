@@ -166,7 +166,7 @@ export class AddOrderNumberFieldWithDefault1764483675977 implements MigrationInt
         await queryRunner.query(`COMMENT ON COLUMN "common_users"."birth_date" IS NULL`);
         await queryRunner.query(`COMMENT ON COLUMN "common_users"."phone_alternative" IS NULL`);
         await queryRunner.query(`COMMENT ON COLUMN "common_users"."email" IS NULL`);
-        await queryRunner.query(`COMMENT ON COLUMN "common_users"."password_hash" IS NULL`);
+        await queryRunner.query(`COMMENT ON COLUMN "common_users"."password" IS NULL`);
         await queryRunner.query(`ALTER TABLE "common_users" ALTER COLUMN "accept_terms" SET NOT NULL`);
         await queryRunner.query(`COMMENT ON COLUMN "common_users"."accept_terms" IS NULL`);
         await queryRunner.query(`ALTER TABLE "common_users" ALTER COLUMN "accept_promotions" SET NOT NULL`);
@@ -604,7 +604,7 @@ export class AddOrderNumberFieldWithDefault1764483675977 implements MigrationInt
         await queryRunner.query(`ALTER TABLE "common_users" ALTER COLUMN "accept_promotions" DROP NOT NULL`);
         await queryRunner.query(`COMMENT ON COLUMN "common_users"."accept_terms" IS 'Aceitou termos de uso (LGPD)'`);
         await queryRunner.query(`ALTER TABLE "common_users" ALTER COLUMN "accept_terms" DROP NOT NULL`);
-        await queryRunner.query(`COMMENT ON COLUMN "common_users"."password_hash" IS 'Senha hash bcrypt para login'`);
+        await queryRunner.query(`COMMENT ON COLUMN "common_users"."password" IS 'Senha hash bcrypt para login'`);
         await queryRunner.query(`COMMENT ON COLUMN "common_users"."email" IS 'Email do cliente (opcional)'`);
         await queryRunner.query(`COMMENT ON COLUMN "common_users"."phone_alternative" IS 'Telefone alternativo'`);
         await queryRunner.query(`COMMENT ON COLUMN "common_users"."birth_date" IS 'Data de nascimento do cliente'`);

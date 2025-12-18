@@ -1,13 +1,10 @@
 // ============================================
 // COMPONENTE: ALERT DIALOG (Radix + Tailwind)
 // ============================================
-// Componente de diálogo de alerta reutilizável.
-// Baseado no Radix UI AlertDialog, com estilização via Tailwind.
-// Inclui:
-// - Overlay com animações
-// - Content centralizado e responsivo
-// - Header, Footer, Title e Description
-// - Botões de ação e cancelamento integrados ao sistema de Button
+// Componente reutilizável de diálogo de alerta.
+// Baseado no Radix UI AlertDialog com estilização via Tailwind.
+// Inclui overlay animado, conteúdo centralizado,
+// header, footer, título, descrição e botões de ação.
 // ============================================
 
 import * as React from "react";
@@ -16,38 +13,51 @@ import * as AlertDialogPrimitive from "@radix-ui/react-alert-dialog";
 import { cn } from "@/lib/utils";
 import { buttonVariants } from "@/components/ui/button";
 
-// Root do AlertDialog
+// ============================================
+// ROOT / TRIGGER / PORTAL
+// ============================================
+
+// Root principal do AlertDialog
 const AlertDialog = AlertDialogPrimitive.Root;
 
-// Trigger para abrir o diálogo
+// Trigger responsável por abrir o diálogo
 const AlertDialogTrigger = AlertDialogPrimitive.Trigger;
 
-// Portal para renderizar fora da árvore principal
+// Portal para renderizar o diálogo fora da árvore principal
 const AlertDialogPortal = AlertDialogPrimitive.Portal;
 
-// Overlay (fundo escuro com animações)
+// ============================================
+// OVERLAY
+// ============================================
+// Camada de fundo escura com animações
+// ============================================
 const AlertDialogOverlay = React.forwardRef<
   React.ElementRef<typeof AlertDialogPrimitive.Overlay>,
   React.ComponentPropsWithoutRef<typeof AlertDialogPrimitive.Overlay>
 >(({ className, ...props }, ref) => (
   <AlertDialogPrimitive.Overlay
+    ref={ref}
     className={cn(
       "fixed inset-0 z-50 bg-black/80 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0",
       className
     )}
     {...props}
-    ref={ref}
   />
 ));
 AlertDialogOverlay.displayName = AlertDialogPrimitive.Overlay.displayName;
 
-// Conteúdo principal do diálogo
+// ============================================
+// CONTENT
+// ============================================
+// Conteúdo principal do diálogo, centralizado
+// ============================================
 const AlertDialogContent = React.forwardRef<
   React.ElementRef<typeof AlertDialogPrimitive.Content>,
   React.ComponentPropsWithoutRef<typeof AlertDialogPrimitive.Content>
 >(({ className, ...props }, ref) => (
   <AlertDialogPortal>
     <AlertDialogOverlay />
+
     <AlertDialogPrimitive.Content
       ref={ref}
       className={cn(
@@ -60,7 +70,11 @@ const AlertDialogContent = React.forwardRef<
 ));
 AlertDialogContent.displayName = AlertDialogPrimitive.Content.displayName;
 
-// Header do diálogo
+// ============================================
+// HEADER / FOOTER
+// ============================================
+
+// Cabeçalho do diálogo (título + descrição)
 const AlertDialogHeader = ({
   className,
   ...props
@@ -75,7 +89,7 @@ const AlertDialogHeader = ({
 );
 AlertDialogHeader.displayName = "AlertDialogHeader";
 
-// Footer do diálogo
+// Rodapé do diálogo (botões)
 const AlertDialogFooter = ({
   className,
   ...props
@@ -90,7 +104,11 @@ const AlertDialogFooter = ({
 );
 AlertDialogFooter.displayName = "AlertDialogFooter";
 
-// Título do diálogo
+// ============================================
+// TITLE / DESCRIPTION
+// ============================================
+
+// Título principal do diálogo
 const AlertDialogTitle = React.forwardRef<
   React.ElementRef<typeof AlertDialogPrimitive.Title>,
   React.ComponentPropsWithoutRef<typeof AlertDialogPrimitive.Title>
@@ -103,7 +121,7 @@ const AlertDialogTitle = React.forwardRef<
 ));
 AlertDialogTitle.displayName = AlertDialogPrimitive.Title.displayName;
 
-// Descrição do diálogo
+// Texto descritivo do diálogo
 const AlertDialogDescription = React.forwardRef<
   React.ElementRef<typeof AlertDialogPrimitive.Description>,
   React.ComponentPropsWithoutRef<typeof AlertDialogPrimitive.Description>
@@ -117,14 +135,21 @@ const AlertDialogDescription = React.forwardRef<
 AlertDialogDescription.displayName =
   AlertDialogPrimitive.Description.displayName;
 
-// Botão de ação principal
+// ============================================
+// ACTIONS
+// ============================================
+
+// Botão de ação principal (confirmar)
 const AlertDialogAction = React.forwardRef<
   React.ElementRef<typeof AlertDialogPrimitive.Action>,
   React.ComponentPropsWithoutRef<typeof AlertDialogPrimitive.Action>
 >(({ className, ...props }, ref) => (
   <AlertDialogPrimitive.Action
     ref={ref}
-    className={cn(buttonVariants(), className)}
+    className={cn(
+      buttonVariants(), // Usa variante padrão de Button
+      className
+    )}
     {...props}
   />
 ));
@@ -138,8 +163,8 @@ const AlertDialogCancel = React.forwardRef<
   <AlertDialogPrimitive.Cancel
     ref={ref}
     className={cn(
-      buttonVariants({ variant: "outline" }),
-      "mt-2 sm:mt-0",
+      buttonVariants({ variant: "outline" }), // Variante outline
+      "mt-2 sm:mt-0", // Ajuste de espaçamento responsivo
       className
     )}
     {...props}
@@ -147,7 +172,9 @@ const AlertDialogCancel = React.forwardRef<
 ));
 AlertDialogCancel.displayName = AlertDialogPrimitive.Cancel.displayName;
 
-// Exporta todos os subcomponentes
+// ============================================
+// EXPORTAÇÕES
+// ============================================
 export {
   AlertDialog,
   AlertDialogPortal,

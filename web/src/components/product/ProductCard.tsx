@@ -1,9 +1,10 @@
 // ============================================
 // COMPONENTE: CARD DE PRODUTO
 // ============================================
-// Exibe um produto (pizza, bebida, etc) em card
-// Mostra imagem, nome, descrição, preços
-// Botão para abrir modal de seleção
+// Responsável por exibir um produto individual em formato de card.
+// Suporta pizzas, bebidas e sobremesas.
+// Exibe imagem, nome, descrição e menor preço disponível.
+// Permite abrir o modal de seleção do produto.
 // ============================================
 
 import React, { useState } from "react";
@@ -11,19 +12,26 @@ import { Product } from "@/services/product.service";
 import Image from "next/image";
 import ProductModal from "./ProductModal";
 
+// ============================================
+// INTERFACE DE PROPS
+// ============================================
 interface ProductCardProps {
-  product: Product;
+  product: Product; // Dados do produto exibido no card
 }
 
+// ============================================
+// COMPONENTE
+// ============================================
 const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false); // Controla abertura do modal
 
   // ============================================
   // FORMATAR PREÇO
   // ============================================
-  // Preço vem em centavos (ex: "2500" = R$ 25,00)
+  // Recebe valor em centavos (string)
+  // Converte para número, divide por 100 e formata em BRL
   const formatPrice = (priceInCents: string) => {
-    const price = parseFloat(priceInCents) / 100;
+    const price = parseFloat(priceInCents) / 100; // Converte centavos para reais
     return new Intl.NumberFormat("pt-BR", {
       style: "currency",
       currency: "BRL",
@@ -33,14 +41,16 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
   // ============================================
   // PEGAR MENOR PREÇO
   // ============================================
-  // Se produto tem variações, pega o menor preço
+  // Caso o produto tenha variações:
+  // - Extrai os preços
+  // - Retorna o menor valor formatado
   const getLowestPrice = () => {
     if (!product.variants || product.variants.length === 0) {
-      return "R$ 0,00";
+      return "R$ 0,00"; // Fallback de segurança
     }
 
-    const prices = product.variants.map((v) => parseFloat(v.price));
-    const lowestPrice = Math.min(...prices);
+    const prices = product.variants.map((v) => parseFloat(v.price)); // Lista de preços
+    const lowestPrice = Math.min(...prices); // Menor valor encontrado
 
     return formatPrice(lowestPrice.toString());
   };
@@ -49,14 +59,14 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
   // ABRIR MODAL
   // ============================================
   const handleOpenModal = () => {
-    setIsModalOpen(true);
+    setIsModalOpen(true); // Abre modal de seleção
   };
 
   // ============================================
   // FECHAR MODAL
   // ============================================
   const handleCloseModal = () => {
-    setIsModalOpen(false);
+    setIsModalOpen(false); // Fecha modal de seleção
   };
 
   return (
@@ -70,7 +80,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
         {/* ============================================ */}
         <div
           className="relative h-48 bg-gray-200 overflow-hidden"
-          onClick={handleOpenModal}
+          onClick={handleOpenModal} // Clique na imagem abre o modal
         >
           {product.image_url ? (
             <Image
@@ -80,7 +90,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
               className="object-cover hover:scale-110 transition-transform duration-300"
             />
           ) : (
-            // Placeholder se não tiver imagem
+            // Placeholder exibido quando não há imagem cadastrada
             <div className="w-full h-full flex items-center justify-center text-6xl">
               {product.type === "pizza" && "🍕"}
               {product.type === "bebida" && "🥤"}
@@ -93,12 +103,12 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
         {/* INFORMAÇÕES DO PRODUTO */}
         {/* ============================================ */}
         <div className="p-4">
-          {/* Nome */}
+          {/* Nome do produto */}
           <h3 className="text-lg font-bold text-gray-800 mb-2">
             {product.name}
           </h3>
 
-          {/* Descrição */}
+          {/* Descrição resumida */}
           <p className="text-sm text-gray-600 mb-4 line-clamp-2">
             {product.description}
           </p>
@@ -107,7 +117,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
           {/* PREÇO E BOTÃO */}
           {/* ============================================ */}
           <div className="flex items-center justify-between">
-            {/* Preço */}
+            {/* Área de preço */}
             <div>
               <span className="text-xs text-gray-500">A partir de</span>
               <p className="text-xl font-bold text-red-600">
@@ -115,9 +125,9 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
               </p>
             </div>
 
-            {/* Botão adicionar */}
+            {/* Botão para abrir modal */}
             <button
-              onClick={handleOpenModal}
+              onClick={handleOpenModal} // Abre modal de seleção
               className="bg-red-600 text-white px-4 py-2 rounded-lg font-semibold hover:bg-red-700 transition-colors"
             >
               Adicionar
@@ -127,17 +137,20 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
       </div>
 
       {/* ============================================ */}
-      {/* MODAL DE SELEÇÃO */}
+      {/* MODAL DE SELEÇÃO DO PRODUTO */}
       {/* ============================================ */}
       {isModalOpen && (
         <ProductModal
-          product={product}
-          isOpen={isModalOpen}
-          onClose={handleCloseModal}
+          product={product} // Produto selecionado
+          isOpen={isModalOpen} // Estado do modal
+          onClose={handleCloseModal} // Callback de fechamento
         />
       )}
     </>
   );
 };
 
+// ============================================
+// EXPORTAÇÃO
+// ============================================
 export default ProductCard;

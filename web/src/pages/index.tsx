@@ -1,6 +1,9 @@
 // ============================================
 // PÁGINA: HOME
 // ============================================
+// Página inicial da aplicação
+// Exibe hero section, diferenciais e call to action
+// ============================================
 
 import React from "react";
 import { useRouter } from "next/router";
@@ -11,7 +14,7 @@ export default function HomePage() {
   const router = useRouter();
 
   // ============================================
-  // NAVEGAR PARA CARDÁPIO
+  // FUNÇÃO: NAVEGAR PARA CARDÁPIO
   // ============================================
   const handleGoToMenu = () => {
     router.push("/cardapio");
@@ -19,6 +22,9 @@ export default function HomePage() {
 
   return (
     <>
+      {/* ============================================ */}
+      {/* SEO: HEAD CONFIGURAÇÃO */}
+      {/* ============================================ */}
       <Head>
         <title>
           Pizzaria Massa Nostra - As Melhores Pizzas de Montes Claros
@@ -54,7 +60,7 @@ export default function HomePage() {
       </section>
 
       {/* ============================================ */}
-      {/* DIFERENCIAIS */}
+      {/* SEÇÃO: DIFERENCIAIS */}
       {/* ============================================ */}
       <section className="py-16">
         <div className="container mx-auto px-4">
@@ -87,7 +93,7 @@ export default function HomePage() {
               </p>
             </div>
 
-            {/* Sempre Aberto */}
+            {/* Horário Flexível */}
             <div className="bg-white rounded-lg shadow-md p-8 text-center">
               <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
                 <Clock className="w-8 h-8 text-red-600" />

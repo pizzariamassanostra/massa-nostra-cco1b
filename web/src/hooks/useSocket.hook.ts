@@ -1,19 +1,30 @@
+// ============================================
+// HOOK: USE SOCKET
+// ============================================
+// Gerencia conexão WebSocket com o backend.
+// Escuta eventos de pedidos, pagamentos e notificações
+// em tempo real para clientes e administradores.
+// ============================================
+
 import { useEffect, useState, useCallback } from "react";
 import io, { Socket } from "socket.io-client";
 
-/**
- * ============================================
- * HOOK: useSocket
- * ============================================
- * Gerencia conexão WebSocket com o backend
- * Escuta eventos: pagamento aprovado, status mudanças, etc
- * ============================================
- */
+// ============================================
+// HOOK PRINCIPAL
+// ============================================
+// Responsável por criar, manter e limpar a conexão
+// WebSocket e expor eventos recebidos ao frontend.
+// ============================================
 export function useSocket() {
+  // ============================================
+  // ESTADOS DE CONEXÃO
+  // ============================================
   const [socket, setSocket] = useState<Socket | null>(null);
   const [isConnected, setIsConnected] = useState(false);
 
-  // Estados para eventos recebidos
+  // ============================================
+  // ESTADOS DE EVENTOS RECEBIDOS
+  // ============================================
   const [paymentApproved, setPaymentApproved] = useState<any>(null);
   const [orderPreparing, setOrderPreparing] = useState<any>(null);
   const [orderOnDelivery, setOrderOnDelivery] = useState<any>(null);
@@ -21,18 +32,30 @@ export function useSocket() {
   const [orderCancelled, setOrderCancelled] = useState<any>(null);
   const [newOrderForAdmin, setNewOrderForAdmin] = useState<any>(null);
 
-  // Conectar ao WebSocket quando componente monta
+  // ============================================
+  // EFEITO: CONEXÃO COM WEBSOCKET
+  // ============================================
+  // Inicia conexão ao montar o componente e
+  // encerra ao desmontar
+  // ============================================
   useEffect(() => {
-    // Conectar ao servidor WebSocket (usa variável de ambiente pública do Next)
+    // ============================================
+    // DEFINIÇÃO DA URL BASE
+    // ============================================
+    // Prioriza variável pública do socket,
+    // fallback para API ou origin do navegador
+    // ============================================
     const socketBase =
       (process.env.NEXT_PUBLIC_SOCKET_URL as string) ||
       (process.env.NEXT_PUBLIC_API_URL as string) ||
       (typeof window !== "undefined" ? window.location.origin : "");
 
-    // remove trailing slash caso exista
+    // Remove barra final se existir
     const base = socketBase.replace(/\/$/, "");
 
-    // usa websocket para maior compatibilidade em produção
+    // ============================================
+    // CRIAÇÃO DO SOCKET
+    // ============================================
     const newSocket: Socket = io(`${base}/notifications`, {
       transports: ["websocket"],
       reconnection: true,
@@ -49,7 +72,7 @@ export function useSocket() {
       console.log("WebSocket conectado!", newSocket.id);
       setIsConnected(true);
 
-      // Registrar userId do usuário logado
+      // Registrar usuário autenticado no socket
       const userToken = localStorage.getItem("token");
       const userId = localStorage.getItem("userId");
 
@@ -69,40 +92,40 @@ export function useSocket() {
     });
 
     // ============================================
-    // EVENTOS DE PEDIDOS
+    // EVENTOS DE PEDIDOS E PAGAMENTOS
     // ============================================
 
-    // 🟢 Pagamento aprovado
+    // Pagamento aprovado
     newSocket.on("paymentApproved", (data) => {
       console.log("🟢 Pagamento aprovado!", data);
       setPaymentApproved(data);
     });
 
-    // 🟠 Novo pedido para admin
+    // Novo pedido para admin
     newSocket.on("newOrderForAdmin", (data) => {
       console.log("🟠 Novo pedido para admin!", data);
       setNewOrderForAdmin(data);
     });
 
-    // 🟡 Pedido em preparação
+    // Pedido em preparação
     newSocket.on("orderPreparing", (data) => {
       console.log("🟡 Pedido em preparação!", data);
       setOrderPreparing(data);
     });
 
-    // 🔵 Pedido saiu para entrega
+    // Pedido saiu para entrega
     newSocket.on("orderOnDelivery", (data) => {
       console.log("🔵 Pedido saiu para entrega!", data);
       setOrderOnDelivery(data);
     });
 
-    // ✅ Pedido entregue
+    // Pedido entregue
     newSocket.on("orderDelivered", (data) => {
-      console.log("✅ Pedido entregue!", data);
+      console.log("Pedido entregue!", data);
       setOrderDelivered(data);
     });
 
-    // 🔴 Pedido cancelado
+    // Pedido cancelado
     newSocket.on("orderCancelled", (data) => {
       console.log("🔴 Pedido cancelado!", data);
       setOrderCancelled(data);
@@ -110,13 +133,19 @@ export function useSocket() {
 
     setSocket(newSocket);
 
-    // Cleanup: desconectar ao desmontar
+    // ============================================
+    // CLEANUP
+    // ============================================
+    // Encerra conexão ao desmontar o componente
+    // ============================================
     return () => {
       newSocket.disconnect();
     };
   }, []);
 
-  // Callback para limpar eventos
+  // ============================================
+  // CALLBACKS DE LIMPEZA DE EVENTOS
+  // ============================================
   const clearPaymentApproved = useCallback(() => {
     setPaymentApproved(null);
   }, []);
@@ -133,9 +162,13 @@ export function useSocket() {
     setOrderDelivered(null);
   }, []);
 
+  // ============================================
+  // RETORNO DO HOOK
+  // ============================================
   return {
     socket,
     isConnected,
+
     // Eventos
     paymentApproved,
     orderPreparing,
@@ -143,7 +176,8 @@ export function useSocket() {
     orderDelivered,
     orderCancelled,
     newOrderForAdmin,
-    // Callbacks para limpar
+
+    // Callbacks
     clearPaymentApproved,
     clearOrderPreparing,
     clearOrderOnDelivery,

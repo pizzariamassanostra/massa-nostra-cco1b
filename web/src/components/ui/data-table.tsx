@@ -30,17 +30,22 @@ import {
 import { DataTablePagination } from "./pagination";
 import { useMemo, useState } from "react";
 
-// Props do componente DataTable
+// ============================================
+// INTERFACES
+// ============================================
 interface DataTableProps<TData, TValue> {
-  columns: ColumnDef<TData, TValue>[]; // Definição das colunas
-  data: TData[]; // Dados da tabela
-  itemsCount?: number; // Total de itens (opcional)
-  paginationEnabled?: boolean; // Habilita paginação
-  pagination?: PaginationState; // Estado de paginação externo
-  onPaginationChange?: (pagination: PaginationState) => void; // Callback de mudança de paginação
-  tableOptions?: Partial<TableOptions<TData>>; // Opções adicionais da tabela
+  columns: ColumnDef<TData, TValue>[]; // Definição das colunas da tabela
+  data: TData[]; // Dados que serão renderizados na tabela
+  itemsCount?: number; // Quantidade total de itens (para paginação manual)
+  paginationEnabled?: boolean; // Define se a paginação será exibida
+  pagination?: PaginationState; // Estado de paginação controlado externamente
+  onPaginationChange?: (pagination: PaginationState) => void; // Callback ao alterar paginação
+  tableOptions?: Partial<TableOptions<TData>>; // Opções adicionais do TanStack Table
 }
 
+// ============================================
+// COMPONENTE
+// ============================================
 export function DataTable<TData, TValue>({
   columns,
   data,
@@ -50,39 +55,49 @@ export function DataTable<TData, TValue>({
   onPaginationChange,
   tableOptions,
 }: Readonly<DataTableProps<TData, TValue>>) {
-  // Dados padrão caso não haja registros
+  // ============================================
+  // DADOS PADRÃO
+  // ============================================
+  // Evita erros quando a tabela não possui registros
   const defaultData = useMemo(() => [], []);
 
-  // Estado interno de paginação (quando não controlado externamente)
+  // ============================================
+  // ESTADO DE PAGINAÇÃO INTERNA
+  // ============================================
+  // Utilizado quando a paginação não é controlada externamente
   const [internalPagination, setInternalPagination] = useState<PaginationState>(
     pagination ?? { pageIndex: 0, pageSize: 10 }
   );
 
-  // Configuração padrão da tabela
+  // ============================================
+  // CONFIGURAÇÃO BASE DA TABELA
+  // ============================================
   const defaultTableOptions: TableOptions<TData> = {
-    data: data.length ? data : defaultData,
-    columns,
-    getCoreRowModel: getCoreRowModel(),
-    getExpandedRowModel: getExpandedRowModel(),
-    getFilteredRowModel: getFilteredRowModel(),
-    getPaginationRowModel: getPaginationRowModel(),
+    data: data.length ? data : defaultData, // Usa dados reais ou fallback
+    columns, // Definição das colunas
+    getCoreRowModel: getCoreRowModel(), // Modelo base de linhas
+    getExpandedRowModel: getExpandedRowModel(), // Suporte a linhas expansíveis
+    getFilteredRowModel: getFilteredRowModel(), // Suporte a filtros
+    getPaginationRowModel: getPaginationRowModel(), // Suporte a paginação
 
-    // Calcula número de páginas
+    // Calcula a quantidade total de páginas
     pageCount: Math.ceil(itemsCount / internalPagination.pageSize),
 
-    ...tableOptions,
+    ...tableOptions, // Permite sobrescrever opções padrão
   };
 
-  // Caso a paginação seja controlada externamente
+  // ============================================
+  // PAGINAÇÃO CONTROLADA EXTERNAMENTE
+  // ============================================
   if (pagination) {
     defaultTableOptions.state = {
       ...defaultTableOptions.state,
-      pagination,
+      pagination, // Usa paginação vinda do componente pai
     };
 
-    defaultTableOptions.manualPagination = true;
+    defaultTableOptions.manualPagination = true; // Indica paginação manual
 
-    // Corrigido: agora é uma função e não um objeto
+    // Atualiza paginação via callback externo
     defaultTableOptions.onPaginationChange = (updater) => {
       const newValue =
         typeof updater === "function" ? updater(pagination) : updater;
@@ -90,22 +105,27 @@ export function DataTable<TData, TValue>({
       onPaginationChange?.(newValue);
     };
   } else {
-    // Caso a paginação seja interna
+    // ============================================
+    // PAGINAÇÃO INTERNA
+    // ============================================
     defaultTableOptions.state = {
       ...defaultTableOptions.state,
-      pagination: internalPagination,
+      pagination: internalPagination, // Usa estado interno
     };
 
     defaultTableOptions.onPaginationChange = (updater) => {
       setInternalPagination((old) => {
         const newValue = typeof updater === "function" ? updater(old) : updater;
-        onPaginationChange?.(newValue);
+
+        onPaginationChange?.(newValue); // Notifica se necessário
         return newValue;
       });
     };
   }
 
-  // Cria instância da tabela
+  // ============================================
+  // INSTÂNCIA DA TABELA
+  // ============================================
   const table = useReactTable<TData>(defaultTableOptions);
 
   return (

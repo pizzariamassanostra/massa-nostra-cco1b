@@ -1,21 +1,23 @@
 // ============================================
 // COMPONENTE: TABLE
 // ============================================
-// Componente reutilizável de tabela com suporte a rolagem.
-// Usa forwardRef para permitir referência externa ao elemento <table>.
-// Inclui boas práticas de acessibilidade com caption oculto.
+// Componente reutilizável de tabela com suporte a rolagem
+// Usa forwardRef para permitir referência externa
+// Inclui boas práticas de acessibilidade
 // ============================================
 
 import * as React from "react";
-
 import { cn } from "@/lib/utils";
 
+// ============================================
+// COMPONENTE: TABLE
+// ============================================
 const Table = React.forwardRef<
   HTMLTableElement,
   React.HTMLAttributes<HTMLTableElement>
 >(({ className, ...props }, ref) => (
   <section
-    aria-label="Tabela rolavel"
+    aria-label="Tabela rolavel" // Acessibilidade para leitores de tela
     className="relative w-full overflow-auto"
   >
     <table
@@ -23,10 +25,10 @@ const Table = React.forwardRef<
       className={cn("w-full caption-bottom text-sm", className)}
       {...props}
     >
-      {/* Caption obrigatório p/ acessibilidade */}
+      {/* Caption obrigatório para acessibilidade */}
       <caption className="sr-only">Tabela de dados rolável</caption>
 
-      {/* Garantir header válido */}
+      {/* Conteúdo da tabela */}
       {props.children}
     </table>
   </section>
@@ -34,14 +36,21 @@ const Table = React.forwardRef<
 
 Table.displayName = "Table";
 
+// ============================================
+// COMPONENTE: TABLE HEADER
+// ============================================
 const TableHeader = React.forwardRef<
   HTMLTableSectionElement,
   React.HTMLAttributes<HTMLTableSectionElement>
 >(({ className, ...props }, ref) => (
   <thead ref={ref} className={cn("[&_tr]:border-b", className)} {...props} />
 ));
+
 TableHeader.displayName = "TableHeader";
 
+// ============================================
+// COMPONENTE: TABLE BODY
+// ============================================
 const TableBody = React.forwardRef<
   HTMLTableSectionElement,
   React.HTMLAttributes<HTMLTableSectionElement>
@@ -52,8 +61,12 @@ const TableBody = React.forwardRef<
     {...props}
   />
 ));
+
 TableBody.displayName = "TableBody";
 
+// ============================================
+// COMPONENTE: TABLE FOOTER
+// ============================================
 const TableFooter = React.forwardRef<
   HTMLTableSectionElement,
   React.HTMLAttributes<HTMLTableSectionElement>
@@ -67,8 +80,12 @@ const TableFooter = React.forwardRef<
     {...props}
   />
 ));
+
 TableFooter.displayName = "TableFooter";
 
+// ============================================
+// COMPONENTE: TABLE ROW
+// ============================================
 const TableRow = React.forwardRef<
   HTMLTableRowElement,
   React.HTMLAttributes<HTMLTableRowElement>
@@ -82,8 +99,12 @@ const TableRow = React.forwardRef<
     {...props}
   />
 ));
+
 TableRow.displayName = "TableRow";
 
+// ============================================
+// COMPONENTE: TABLE HEAD
+// ============================================
 const TableHead = React.forwardRef<
   HTMLTableCellElement,
   React.ThHTMLAttributes<HTMLTableCellElement>
@@ -97,8 +118,12 @@ const TableHead = React.forwardRef<
     {...props}
   />
 ));
+
 TableHead.displayName = "TableHead";
 
+// ============================================
+// COMPONENTE: TABLE CELL
+// ============================================
 const TableCell = React.forwardRef<
   HTMLTableCellElement,
   React.TdHTMLAttributes<HTMLTableCellElement>
@@ -109,8 +134,12 @@ const TableCell = React.forwardRef<
     {...props}
   />
 ));
+
 TableCell.displayName = "TableCell";
 
+// ============================================
+// COMPONENTE: TABLE CAPTION
+// ============================================
 const TableCaption = React.forwardRef<
   HTMLTableCaptionElement,
   React.HTMLAttributes<HTMLTableCaptionElement>
@@ -121,8 +150,12 @@ const TableCaption = React.forwardRef<
     {...props}
   />
 ));
+
 TableCaption.displayName = "TableCaption";
 
+// ============================================
+// EXPORTAÇÃO
+// ============================================
 export {
   Table,
   TableHeader,

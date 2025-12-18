@@ -1,12 +1,10 @@
-/**
- * ============================================
- * PÁGINA: CHECKOUT src/pages/checkout/index.tsx
- * ============================================
- * Fluxo de finalização de pedido
- * Seleção de endereço e forma de pagamento
- * Integração com PIX, Cartão, Dinheiro
- * ============================================
- */
+// ============================================
+// PÁGINA: CHECKOUT src/pages/checkout/index.tsx
+// ============================================
+// Fluxo de finalização de pedido
+// Seleção de endereço e forma de pagamento
+// Integração com PIX, Cartão, Dinheiro
+// ============================================
 
 import React, { useState, useEffect } from "react";
 import { useCart } from "@/contexts/CartContext";
@@ -96,7 +94,7 @@ export default function CheckoutPage() {
   // ============================================
   useEffect(() => {
     if (paymentApproved) {
-      console.log("💚 Pagamento confirmado via WebSocket!", paymentApproved);
+      console.log("Pagamento confirmado via WebSocket!", paymentApproved);
 
       // Mostrar mensagem de sucesso
       toast.success("Pagamento aprovado! Seu pedido está na fila da pizzaria");
@@ -114,11 +112,7 @@ export default function CheckoutPage() {
   // ============================================
   // EFEITO: Validar autenticação
   // ============================================
-  /**
-   * Verifica se usuário está logado
-   * Se não estiver, redireciona para login
-   * Carrega endereços quando autenticado
-   */
+
   useEffect(() => {
     if (!isAuthenticated) {
       router.push("/login?redirect=/checkout");
@@ -130,11 +124,11 @@ export default function CheckoutPage() {
   // ============================================
   // EFEITO: Validar carrinho apenas se NÃO há pedido em processamento
   // ============================================
-  /**
-   * Se não há itens E não há pedido criado
-   * Redireciona para cardápio
-   * MAS se há pedido criado (esperando PIX), deixa aberto
-   */
+  // Se não há itens E não há pedido criado
+  // Redireciona para cardápio
+  // Mas se há pedido criado (esperando PIX), deixa aberto
+  // ============================================
+
   useEffect(() => {
     if (items.length === 0 && !createdOrderId && !loading) {
       const timer = setTimeout(() => {
@@ -147,10 +141,10 @@ export default function CheckoutPage() {
   // ============================================
   // FUNÇÃO: Carregar endereços do usuário
   // ============================================
-  /**
-   * Busca todos os endereços cadastrados do cliente
-   * Seleciona o endereço padrão automaticamente
-   */
+  // Busca todos os endereços cadastrados do cliente
+  // Seleciona o endereço padrão automaticamente
+  //=============================================
+
   const loadAddresses = async () => {
     try {
       setLoadingAddresses(true);
@@ -173,16 +167,17 @@ export default function CheckoutPage() {
   // ============================================
   // FUNÇÃO: Buscar CEP na API ViaCEP
   // ============================================
-  /**
-   * Busca dados de endereço a partir do CEP
-   * Preenche automaticamente rua, bairro, cidade e estado
-   */
+  // Busca dados de endereço a partir do CEP
+  // Preenche automaticamente rua, bairro, cidade e estado
+  // ============================================
+
   const handleSearchCep = async () => {
     const cleanCep = newAddress.zip_code.replaceAll(/\D/g, "");
     if (cleanCep.length !== 8) {
       toast.error("CEP inválido");
       return;
     }
+
     try {
       const data = await addressService.searchCep(cleanCep);
       setNewAddress((prev) => ({
@@ -192,6 +187,7 @@ export default function CheckoutPage() {
         city: data.localidade,
         state: data.uf,
       }));
+
       toast.success("CEP encontrado!");
     } catch (error) {
       console.error("Erro ao buscar CEP:", error);
@@ -202,10 +198,10 @@ export default function CheckoutPage() {
   // ============================================
   // FUNÇÃO: Criar novo endereço
   // ============================================
-  /**
-   * Salva novo endereço para o cliente
-   * Seleciona automaticamente o novo endereço
-   */
+  // Salva novo endereço para o cliente
+  // Seleciona automaticamente o novo endereço
+  // ============================================
+
   const handleCreateAddress = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
@@ -241,14 +237,14 @@ export default function CheckoutPage() {
    * Diferencia entre métodos de pagamento:
    *
    * PIX:
-   *   1. Cria pedido com status "pending"
+   *   1. Cria pedido com status "pendente"
    *   2. Abre modal com QR Code
    *   3. Aguarda confirmação do webhook
-   *   4. useEffect acima (linha ~102) vai escutar paymentApproved via WebSocket
+   *   4. paymentApproved via WebSocket
    *      quando webhook confirmar aprovação do PIX
    *
    * Dinheiro:
-   *   1. Cria pedido com status "pending"
+   *   1. Cria pedido com status "pendente"
    *   2. Redireciona para página de pedido
    *   3. Admin confirma manualmente
    *
@@ -291,13 +287,11 @@ export default function CheckoutPage() {
       // ============================================
       // CRIAR PEDIDO
       // ============================================
-      // Este passo é comum para todas as formas de pagamento
-      const orderResponse = await orderService.create(orderData);
 
+      const orderResponse = await orderService.create(orderData);
       if (!orderResponse.ok || !orderResponse.order) {
         throw new Error("Erro ao criar pedido");
       }
-
       const newOrderId = orderResponse.order.id;
       setCreatedOrderId(newOrderId);
       clearCart(); // Limpar carrinho após sucesso
@@ -308,14 +302,14 @@ export default function CheckoutPage() {
 
       // --------- PIX ---------
       if (paymentMethod === "pix") {
-        // 1. Mostrar que está aguardando pagamento
+        // Mostrar que está aguardando pagamento
         setPixPaymentPending(true);
-        // 2. Abrir modal com QR Code
+        // Abrir modal com QR Code
         setShowPixModal(true);
-        // 3. Avisar usuário que precisa escanear
+        // Avisar usuário que precisa escanear
         toast.success("Pedido criado! Escaneie o QR Code para pagar.");
-        // 4. useEffect acima (linha ~102) vai escutar paymentApproved via WebSocket
-        //    quando webhook confirmar aprovação do PIX
+        // paymentApproved via WebSocket
+        // quando webhook confirmar aprovação do PIX
         return;
       }
 
@@ -332,7 +326,7 @@ export default function CheckoutPage() {
         paymentMethod === "cartao_debito" ||
         paymentMethod === "cartao_credito"
       ) {
-        // Aqui você pode integrar com processadora de cartão
+        // Integrar com processadora de cartão (Quando estiver em produção)
         // Por enquanto, apenas cria o pedido
         toast.success("Pedido criado! Processando pagamento com cartão...");
         router.push(`/meus-pedidos/${newOrderId}`);
@@ -362,7 +356,7 @@ export default function CheckoutPage() {
   /**
    * Chamada quando webhook confirma o pagamento PIX
    * Webhook: POST /webhook/mercadopago
-   * Muda status do pedido para "confirmed"
+   * Muda status do pedido para "confirmado"
    * Gera comprovante automaticamente
    */
   const handlePixPaymentConfirmed = () => {
@@ -383,7 +377,7 @@ export default function CheckoutPage() {
   };
 
   // ============================================
-  // RENDERIZAR: Mostrar formulário de cartão?
+  // RENDERIZAR: Mostrar formulário do cartão
   // ============================================
   const showCardForm =
     paymentMethod === "cartao_debito" || paymentMethod === "cartao_credito";
@@ -405,7 +399,7 @@ export default function CheckoutPage() {
         {/* DEBUG: Mostrar status do WebSocket (apenas em desenvolvimento) */}
         {process.env.NODE_ENV === "development" && (
           <div className="mb-4 text-xs text-gray-500">
-            🔗 WebSocket: {isConnected ? "✅ Conectado" : "Desconectado"}
+            🔗 WebSocket: {isConnected ? "Conectado" : "Desconectado"}
           </div>
         )}
 

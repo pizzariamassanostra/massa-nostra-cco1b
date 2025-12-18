@@ -1,52 +1,40 @@
-/**
- * ============================================
- * COMPONENTE: MODAL PIX
- * ============================================
- * Exibe QR Code e código PIX para cópia manual
- *
- * MUDANÇAS:
- * - Remove polling interno (agora via hook parent)
- * - Recebe isPaymentApproved via props
- * - Controle total via checkout/index.tsx
- * - Apenas exibe UI, sem lógica de polling
- * ============================================
- */
+// ============================================
+// COMPONENTE: MODAL PIX
+// ============================================
 
 import React, { useState, useEffect, useCallback } from "react";
 import Image from "next/image";
 import { Copy, CheckCircle, Clock, AlertCircle, X } from "lucide-react";
 import { toast } from "react-hot-toast";
 
-/**
- * Props do componente Modal PIX
- */
+// ============================================
+// INTERFACES DE TIPOS
+// ============================================
+
+// Propriedades do componente Modal PIX
 interface PixQrCodeModalProps {
   isOpen: boolean; // Controla se modal está visível
   orderId: number; // ID do pedido criado
-  totalValue: number; // Valor total em reais (ex: 50.00)
+  totalValue: number; // Valor total em reais (50.00)
   customerEmail: string; // E-mail do cliente
-  isPaymentApproved: boolean; // NOVO: Vem do hook useOrderStatus
-  isValidating: boolean; // NOVO: Hook está validando?
-  onClose: () => void; // Callback quando fechar modal
-  onPaymentConfirmed: () => void; // Callback quando pagamento confirmado
+  isPaymentApproved: boolean; // Status de pagamento aprovado (hook useOrderStatus)
+  isValidating: boolean; // Indica se está validando pagamento
+  onClose: () => void; // Callback ao fechar modal
+  onPaymentConfirmed: () => void; // Callback quando pagamento é confirmado
 }
 
-/**
- * Interface para dados do QR Code retornado pela API
- */
+// Estrutura dos dados do QR Code retornado pela API
 interface QrCodeData {
   qr_code: string; // Código PIX copiável
   qr_code_base64: string; // QR Code em imagem base64
   payment_id: string; // ID do pagamento
-  ticket_url?: string; // URL para acompanhar
-  status: string; // Status atual
+  ticket_url?: string; // URL para acompanhamento (opcional)
+  status: string; // Status atual do pagamento
 }
 
-/**
- * ============================================
- * COMPONENTE: PixQrCodeModal
- * ============================================
- */
+// ============================================
+// COMPONENTE: PixQrCodeModal
+// ============================================
 export const PixQrCodeModal: React.FC<PixQrCodeModalProps> = ({
   isOpen,
   orderId,
@@ -60,87 +48,79 @@ export const PixQrCodeModal: React.FC<PixQrCodeModalProps> = ({
   // ============================================
   // ESTADOS
   // ============================================
-  const [loading, setLoading] = useState(false); // Carregando QR Code?
+  const [loading, setLoading] = useState(false); // Indica carregamento do QR Code
   const [qrCode, setQrCode] = useState<QrCodeData | null>(null); // Dados do QR Code
   const [error, setError] = useState<string | null>(null); // Mensagem de erro
-  const [copied, setCopied] = useState(false); // Código foi copiado?
+  const [copied, setCopied] = useState(false); // Indica se código foi copiado
 
   // ============================================
-  // FUNÇÃO: Gerar QR Code PIX
+  // FUNÇÃO: GERAR QR CODE PIX
   // ============================================
-  /**
-   * Chama API para gerar QR Code PIX
-   * Recebe código copiável + imagem base64
-   */
+  // Responsável por chamar a API e gerar o QR Code PIX
   const generateQrCode = useCallback(async () => {
     try {
-      setLoading(true);
-      setError(null);
+      setLoading(true); // Inicia carregamento
+      setError(null); // Limpa erro anterior
 
-      // Importar serviço de pagamento
+      // Importação dinâmica do serviço de pagamento
       const { paymentService } = await import("@/services/payment.service");
 
       // Converter valor em reais para centavos
       // Exemplo: 50.00 → 5000
       const amountInCents = Math.round(totalValue * 100);
 
-      // Chamar API para gerar QR Code
+      // Chamada da API para gerar QR Code
       const response = await paymentService.generatePixQrCode(
         orderId,
         amountInCents,
         customerEmail
       );
 
-      // Validar resposta
+      // Validar resposta da API
       if (!response.ok) {
         throw new Error(response.message || "Erro ao gerar QR Code");
       }
 
-      // Salvar dados do QR Code
+      // Salvar dados do QR Code retornado
       setQrCode(response.pix);
       toast.success("QR Code gerado com sucesso!");
     } catch (err) {
-      // Exibir erro
+      // Tratamento de erro
       const errorMessage =
         err instanceof Error ? err.message : "Erro ao gerar QR Code";
+
       setError(errorMessage);
       toast.error(errorMessage);
       console.error("Erro ao gerar PIX:", err);
     } finally {
-      setLoading(false);
+      setLoading(false); // Finaliza carregamento
     }
   }, [orderId, totalValue, customerEmail]);
 
   // ============================================
-  // EFEITO: Gerar QR Code ao abrir modal
+  // EFEITO: GERAR QR CODE AO ABRIR MODAL
   // ============================================
   useEffect(() => {
     if (isOpen && !qrCode) {
-      generateQrCode();
+      generateQrCode(); // Gera QR Code ao abrir modal
     }
   }, [isOpen, qrCode, generateQrCode]);
 
   // ============================================
-  // EFEITO: Quando pagamento é aprovado (do hook parent)
+  // EFEITO: PAGAMENTO APROVADO
   // ============================================
-  /**
-   * Detecta quando isPaymentApproved muda pra true
-   * (vindo do useOrderStatus hook em checkout/index.tsx)
-   *
-   * Fluxo:
-   * 1. isPaymentApproved = true (hook detectou webhook)
-   * 2. Modal exibe mensagem de sucesso
-   * 3. Após 2s, executa onPaymentConfirmed()
-   * 4. checkout fecha o modal e redireciona
-   */
+  // Fluxo:
+  // isPaymentApproved = true (hook detectou webhook)
+  // Modal exibe mensagem de sucesso
+  // Após 2s, executa onPaymentConfirmed()
+  // Checkout fecha o modal e redireciona
   useEffect(() => {
     if (!isPaymentApproved) return;
 
-    // Log para debug
-    console.log("[PixQrCodeModal] Pagamento aprovado detectado! 🎉");
+    console.log("[PixQrCodeModal] Pagamento aprovado detectado!");
     toast.success("✓ Pagamento confirmado com sucesso!");
 
-    // Aguardar 2 segundos pra user ver a mensagem de sucesso
+    // Aguarda 2 segundos para feedback visual
     const timer = setTimeout(() => {
       onPaymentConfirmed();
     }, 2000);
@@ -149,24 +129,18 @@ export const PixQrCodeModal: React.FC<PixQrCodeModalProps> = ({
   }, [isPaymentApproved, onPaymentConfirmed]);
 
   // ============================================
-  // FUNÇÃO: Copiar código PIX para área de transferência
+  // FUNÇÃO: COPIAR CÓDIGO PIX
   // ============================================
-  /**
-   * Copia código PIX para clipboard
-   * Mostra feedback visual por 2 segundos
-   */
+  // Copia código PIX para área de transferência
   const copyToClipboard = async () => {
     if (!qrCode?.qr_code) return;
 
     try {
-      // Copiar para clipboard
-      await navigator.clipboard.writeText(qrCode.qr_code);
-
-      // Feedback visual
-      setCopied(true);
+      await navigator.clipboard.writeText(qrCode.qr_code); // Copia código
+      setCopied(true); // Feedback visual
       toast.success("Código PIX copiado!");
 
-      // Remover feedback após 2 segundos
+      // Remove feedback após 2 segundos
       setTimeout(() => setCopied(false), 2000);
     } catch (err) {
       toast.error("Erro ao copiar código");
@@ -175,16 +149,13 @@ export const PixQrCodeModal: React.FC<PixQrCodeModalProps> = ({
   };
 
   // ============================================
-  // FUNÇÃO: Fechar modal
+  // FUNÇÃO: FECHAR MODAL
   // ============================================
   const handleClose = () => {
-    // Resetar estados
-    setQrCode(null);
-    setError(null);
-    setCopied(false);
-
-    // Callback do parent
-    onClose();
+    setQrCode(null); // Limpa QR Code
+    setError(null); // Limpa erro
+    setCopied(false); // Reseta estado de cópia
+    onClose(); // Callback do componente pai
   };
 
   // ============================================
@@ -192,19 +163,22 @@ export const PixQrCodeModal: React.FC<PixQrCodeModalProps> = ({
   // ============================================
   if (!isOpen) return null;
 
-  // ============================================
-  // RENDERIZAÇÃO: Estado de sucesso
-  // ============================================
   if (isPaymentApproved) {
     return (
       <>
-        {/* FUNDO ESCURO */}
+        {/* ============================================ */}
+        {/* FUNDO ESCURO                                 */}
+        {/* ============================================ */}
         <div className="fixed inset-0 bg-black bg-opacity-50 z-40" />
 
-        {/* MODAL */}
+        {/* ============================================ */}
+        {/* MODAL DE SUCESSO                             */}
+        {/* ============================================ */}
         <div className="fixed inset-0 flex items-center justify-center z-50 px-4">
           <div className="bg-white rounded-lg shadow-2xl max-w-md w-full mx-auto p-6 space-y-6 text-center">
-            {/* ÍCONE DE SUCESSO */}
+            {/* ============================================ */}
+            {/* ÍCONE DE SUCESSO                             */}
+            {/* ============================================ */}
             <div className="flex justify-center">
               <div className="relative">
                 <div className="absolute inset-0 bg-green-200 rounded-full animate-ping opacity-75" />
@@ -214,7 +188,9 @@ export const PixQrCodeModal: React.FC<PixQrCodeModalProps> = ({
               </div>
             </div>
 
-            {/* MENSAGEM */}
+            {/* ============================================ */}
+            {/* MENSAGEM                                     */}
+            {/* ============================================ */}
             <div>
               <h2 className="text-2xl font-bold text-green-600">
                 Pagamento Confirmado! ✓
@@ -224,7 +200,9 @@ export const PixQrCodeModal: React.FC<PixQrCodeModalProps> = ({
               </p>
             </div>
 
-            {/* INFORMAÇÃO */}
+            {/* ============================================ */}
+            {/* INFORMAÇÃO                                   */}
+            {/* ============================================ */}
             <div className="bg-green-50 rounded-lg p-4 border border-green-200">
               <p className="text-sm text-green-900">
                 🍕 <span className="font-semibold">Pedido confirmado!</span>
@@ -234,7 +212,9 @@ export const PixQrCodeModal: React.FC<PixQrCodeModalProps> = ({
               </p>
             </div>
 
-            {/* VALOR */}
+            {/* ============================================ */}
+            {/* VALOR PAGO                                   */}
+            {/* ============================================ */}
             <div className="bg-gray-50 rounded-lg p-3">
               <p className="text-sm text-gray-600">Total pago</p>
               <p className="text-2xl font-bold text-gray-800">
@@ -242,7 +222,9 @@ export const PixQrCodeModal: React.FC<PixQrCodeModalProps> = ({
               </p>
             </div>
 
-            {/* BOTÃO */}
+            {/* ============================================ */}
+            {/* BOTÃO DE AÇÃO                                */}
+            {/* ============================================ */}
             <button
               onClick={handleClose}
               className="w-full bg-green-600 text-white py-3 rounded-lg font-semibold hover:bg-green-700 transition-colors"
@@ -256,20 +238,26 @@ export const PixQrCodeModal: React.FC<PixQrCodeModalProps> = ({
   }
 
   // ============================================
-  // RENDERIZAÇÃO: Estado normal (QR Code)
+  // RENDERIZAÇÃO: ESTADO NORMAL (QR CODE)
   // ============================================
   return (
     <>
-      {/* FUNDO ESCURO (BACKDROP) */}
+      {/* ============================================ */}
+      {/* FUNDO ESCURO (BACKDROP)                      */}
+      {/* ============================================ */}
       <div
         className="fixed inset-0 bg-black bg-opacity-50 z-40"
         onClick={handleClose}
       />
 
-      {/* MODAL */}
+      {/* ============================================ */}
+      {/* MODAL                                        */}
+      {/* ============================================ */}
       <div className="fixed inset-0 flex items-center justify-center z-50 px-4">
         <div className="bg-white rounded-lg shadow-2xl max-w-md w-full mx-auto p-6 space-y-6">
-          {/* CABEÇALHO */}
+          {/* ============================================ */}
+          {/* CABEÇALHO                                    */}
+          {/* ============================================ */}
           <div className="flex items-center justify-between">
             <h2 className="text-2xl font-bold text-gray-800">
               Pagamento com PIX
@@ -283,7 +271,9 @@ export const PixQrCodeModal: React.FC<PixQrCodeModalProps> = ({
             </button>
           </div>
 
-          {/* STATUS DE CARREGAMENTO */}
+          {/* ============================================ */}
+          {/* STATUS DE CARREGAMENTO                       */}
+          {/* ============================================ */}
           {loading && (
             <div className="flex flex-col items-center justify-center py-8 space-y-4">
               <div className="w-12 h-12 border-4 border-red-200 border-t-red-600 rounded-full animate-spin" />
@@ -291,7 +281,9 @@ export const PixQrCodeModal: React.FC<PixQrCodeModalProps> = ({
             </div>
           )}
 
-          {/* MENSAGEM DE ERRO */}
+          {/* ============================================ */}
+          {/* MENSAGEM DE ERRO                             */}
+          {/* ============================================ */}
           {error && !loading && (
             <div className="bg-red-50 border border-red-200 rounded-lg p-4 flex gap-3">
               <AlertCircle className="w-5 h-5 text-red-600 flex-shrink-0 mt-0.5" />
@@ -310,10 +302,14 @@ export const PixQrCodeModal: React.FC<PixQrCodeModalProps> = ({
             </div>
           )}
 
-          {/* CONTEÚDO DO QR CODE */}
+          {/* ============================================ */}
+          {/* CONTEÚDO DO QR CODE                          */}
+          {/* ============================================ */}
           {qrCode && !loading && !error && (
             <>
-              {/* VALOR TOTAL */}
+              {/* ============================================ */}
+              {/* VALOR TOTAL                                  */}
+              {/* ============================================ */}
               <div className="bg-red-50 rounded-lg p-4 border border-red-200">
                 <p className="text-sm text-gray-600">Valor a pagar</p>
                 <p className="text-3xl font-bold text-red-600">
@@ -321,7 +317,9 @@ export const PixQrCodeModal: React.FC<PixQrCodeModalProps> = ({
                 </p>
               </div>
 
-              {/* QR CODE IMAGEM */}
+              {/* ============================================ */}
+              {/* QR CODE (IMAGEM)                             */}
+              {/* ============================================ */}
               <div className="flex justify-center">
                 {qrCode.qr_code_base64 ? (
                   <Image
@@ -341,15 +339,19 @@ export const PixQrCodeModal: React.FC<PixQrCodeModalProps> = ({
                 )}
               </div>
 
-              {/* INSTRUÇÕES */}
+              {/* ============================================ */}
+              {/* INSTRUÇÕES                                   */}
+              {/* ============================================ */}
               <div className="bg-blue-50 rounded-lg p-4 border border-blue-200">
                 <p className="text-sm text-blue-900">
-                  📱 Abra seu app bancário e escaneie o QR Code acima ou copie o
+                  Abra seu app bancário e escaneie o QR Code acima ou copie o
                   código PIX.
                 </p>
               </div>
 
-              {/* CÓDIGO PIX COPIÁVEL */}
+              {/* ============================================ */}
+              {/* CÓDIGO PIX COPIÁVEL                          */}
+              {/* ============================================ */}
               <div>
                 <label className="text-sm font-semibold text-gray-700 block mb-2">
                   Código PIX (copiar e colar):
@@ -378,7 +380,9 @@ export const PixQrCodeModal: React.FC<PixQrCodeModalProps> = ({
                 </p>
               </div>
 
-              {/* STATUS DE VALIDAÇÃO - NOVO: Usa isValidating do hook */}
+              {/* ============================================ */}
+              {/* STATUS DE VALIDAÇÃO DO PAGAMENTO             */}
+              {/* ============================================ */}
               {!isPaymentApproved && (
                 <div className="bg-yellow-50 rounded-lg p-4 border border-yellow-200 flex gap-3">
                   <Clock className="w-5 h-5 text-yellow-600 flex-shrink-0 mt-0.5 animate-spin" />
@@ -395,7 +399,9 @@ export const PixQrCodeModal: React.FC<PixQrCodeModalProps> = ({
                 </div>
               )}
 
-              {/* LINK EXTERNO (se disponível) */}
+              {/* ============================================ */}
+              {/* LINK EXTERNO: ACOMPANHAMENTO DO PAGAMENTO    */}
+              {/* ============================================ */}
               {qrCode.ticket_url && (
                 <a
                   href={qrCode.ticket_url}

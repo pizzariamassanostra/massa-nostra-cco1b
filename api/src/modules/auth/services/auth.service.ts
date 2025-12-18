@@ -25,11 +25,11 @@ export class AuthService {
     // Buscar administrador por email
     const user = await this.findOneAdminUserService.findOne({
       where: [{ email: username }],
-      with_password_hash: true,
+      with_password: true,
     });
 
     // Validar senha com bcrypt
-    if (user && (await bcrypt.compare(password, user.password_hash))) {
+    if (user && (await bcrypt.compare(password, user.password))) {
       return {
         id: user.id,
         name: user.name,

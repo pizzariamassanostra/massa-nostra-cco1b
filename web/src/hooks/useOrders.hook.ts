@@ -1,5 +1,5 @@
 // ============================================
-// HOOK: USE ORDERS
+// HOOK: USER ORDERS
 // ============================================
 // Hook para carregar pedidos com React Query
 // Cache automático e revalidação
@@ -8,6 +8,13 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { orderService } from "@/services/order.service";
 import { toast } from "react-hot-toast";
+
+// ============================================
+// INTERFACES / TIPOS
+// ============================================
+// (Não há interfaces ou tipos definidos neste arquivo)
+// PROXIMO PASSO DEFINIR OS TIPOS
+// ============================================
 
 // ============================================
 // HOOK: LISTAR MEUS PEDIDOS
@@ -33,7 +40,7 @@ export const useOrder = (id: number) => {
 };
 
 // ============================================
-// HOOK: CRIAR PEDIDO (MUTATION)
+// HOOK: CRIAR PEDIDO
 // ============================================
 export const useCreateOrder = () => {
   const queryClient = useQueryClient();
@@ -54,7 +61,7 @@ export const useCreateOrder = () => {
 };
 
 // ============================================
-// HOOK: CANCELAR PEDIDO (MUTATION)
+// HOOK: CANCELAR PEDIDO
 // ============================================
 export const useCancelOrder = () => {
   const queryClient = useQueryClient();
@@ -74,3 +81,8 @@ export const useCancelOrder = () => {
     },
   });
 };
+
+// ============================================
+// EXPORTAÇÃO
+// ============================================
+// Hooks exportados individualmente acima

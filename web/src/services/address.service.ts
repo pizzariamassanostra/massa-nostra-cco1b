@@ -7,6 +7,12 @@
 
 import api from "./api.service";
 
+// ============================================
+// INTERFACES DE TIPOS
+// ============================================
+// Estruturas de dados utilizadas para endereços
+// ============================================
+
 // Estrutura de endereço completo
 export interface Address {
   id: number; // Identificador único do endereço
@@ -24,7 +30,7 @@ export interface Address {
   updated_at: string; // Data da última atualização
 }
 
-// DTO para criação/atualização de endereço
+// Estrutura para criação/atualização de endereço
 export interface CreateAddressDto {
   street: string;
   number: string;
@@ -48,7 +54,10 @@ export interface ViaCepResponse {
   erro?: boolean; // Indica erro na consulta
 }
 
-// Serviço de endereços
+// ============================================================================
+// CLASSE DE SERVIÇO
+// Responsável por fazer todas as requisições relacionadas a endereços
+// ============================================================================
 class AddressService {
   // Cria um novo endereço
   async create(
@@ -104,5 +113,7 @@ class AddressService {
   }
 }
 
-// Exporta instância única do serviço
+// ============================================
+// EXPORTAR INSTÂNCIA ÚNICA
+// ============================================
 export const addressService = new AddressService();

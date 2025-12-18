@@ -1,12 +1,18 @@
 // ============================================
 // REDUX REDUCER: CART
 // ============================================
-// Gerencia estado do carrinho no Redux
+// Gerencia o estado global do carrinho de compras
+// incluindo itens, totais e valores de entrega.
 // ============================================
 
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { CartItem } from "@/contexts/CartContext";
 
+// ============================================
+// INTERFACE DE ESTADO
+// ============================================
+// Estrutura do estado do carrinho no Redux
+// ============================================
 interface CartState {
   items: CartItem[];
   totalItems: number;
@@ -15,6 +21,11 @@ interface CartState {
   total: number;
 }
 
+// ============================================
+// ESTADO INICIAL
+// ============================================
+// Estado padrão do carrinho ao iniciar a aplicação
+// ============================================
 const initialState: CartState = {
   items: [],
   totalItems: 0,
@@ -23,10 +34,18 @@ const initialState: CartState = {
   total: 0,
 };
 
+// ============================================
+// SLICE DO REDUX
+// ============================================
+// Define reducers e actions relacionadas ao carrinho
+// ============================================
 const cartSlice = createSlice({
   name: "cart",
   initialState,
   reducers: {
+    // ============================================
+    // ADICIONAR ITEM AO CARRINHO
+    // ============================================
     addItem: (state, action: PayloadAction<CartItem>) => {
       const existingItem = state.items.find(
         (item) => item.id === action.payload.id
@@ -51,6 +70,10 @@ const cartSlice = createSlice({
       );
       state.total = state.subtotal + state.deliveryFee;
     },
+
+    // ============================================
+    // REMOVER ITEM DO CARRINHO
+    // ============================================
     removeItem: (state, action: PayloadAction<string>) => {
       state.items = state.items.filter((item) => item.id !== action.payload);
 
@@ -65,6 +88,10 @@ const cartSlice = createSlice({
       );
       state.total = state.subtotal + state.deliveryFee;
     },
+
+    // ============================================
+    // ATUALIZAR QUANTIDADE DE UM ITEM
+    // ============================================
     updateQuantity: (
       state,
       action: PayloadAction<{ id: string; quantity: number }>
@@ -87,6 +114,10 @@ const cartSlice = createSlice({
       );
       state.total = state.subtotal + state.deliveryFee;
     },
+
+    // ============================================
+    // LIMPAR CARRINHO
+    // ============================================
     clearCart: (state) => {
       state.items = [];
       state.totalItems = 0;
@@ -96,6 +127,11 @@ const cartSlice = createSlice({
   },
 });
 
+// ============================================
+// EXPORTAÇÕES
+// ============================================
+// Actions e reducer do carrinho
+// ============================================
 export const { addItem, removeItem, updateQuantity, clearCart } =
   cartSlice.actions;
 export default cartSlice.reducer;

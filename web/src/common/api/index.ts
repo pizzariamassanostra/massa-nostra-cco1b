@@ -1,47 +1,50 @@
 // ============================================
-// SERVIÇO: API CLIENT (Axios + Next.js)
-// ============================================
-// Configura cliente HTTP Axios para toda a aplicação.
-// - Define cabeçalhos padrão.
-// - Usa variável de ambiente ou localhost como baseURL.
-// - Intercepta requisições para adicionar token de autenticação.
-// - Intercepta respostas para tratar sessão expirada.
-// - Exibe alerta e redireciona usuário em caso de erro de sessão.
+// SERVIÇO: API CLIENTE (Axios + Next.js)
 // ============================================
 
 import axios from "axios";
 import { confirmAlert } from "react-confirm-alert";
 import { redirect } from "next/navigation";
 
-// Cabeçalhos padrão para todas as requisições
+// ============================================
+// OBJETO: Cabeçalhos padrão para requisições HTTP
+// ============================================
 const headers = {
-  Accept: "application/json",
-  "Content-Type": "application/json",
-  "ngrok-skip-browser-warning": "69420", // ignora aviso do ngrok se usado
+  Accept: "application/json", // Aceita respostas em JSON
+  "Content-Type": "application/json", // Envia dados no formato JSON
+  "ngrok-skip-browser-warning": "69420", // Ignora aviso do Ngrok no navegador
 };
 
-// Cliente API (Axios)
+// ============================================
+// INSTÂNCIA: Cliente Axios configurado
+// ============================================
 const Api = axios.create({
   baseURL: process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001",
   headers,
 });
 
-// Interceptor de requisição: adiciona token de autenticação se existir
+// ============================================
+// INTERCEPTOR: Requisição
+// ============================================
 Api.interceptors.request.use(async (config) => {
-  const token = localStorage.getItem("auth_token");
+  const token = localStorage.getItem("auth_token"); // Recupera token salvo
+
   if (token && config && config.headers) {
-    config.headers.Authorization = `Bearer ${token}`;
+    config.headers.Authorization = `Bearer ${token}`; // Insere token no header
   }
-  return config;
+
+  return config; // Retorna configuração atualizada
 });
 
-// Interceptor de resposta: trata erros de autenticação e sessão expirada
+// ============================================
+// INTERCEPTOR: Resposta
+// ============================================
 Api.interceptors.response.use(
   function (response) {
-    return response;
+    return response; // Retorna resposta normalmente em caso de sucesso
   },
   function (error) {
-    const message = error.response?.data?.error?.message;
+    const message = error.response?.data?.error?.message; // Mensagem de erro retornada pela API
 
     // Lista de mensagens que indicam sessão inválida ou expirada
     const sessionErrors = [
@@ -53,25 +56,25 @@ Api.interceptors.response.use(
 
     // Se for erro de sessão, limpa token e exibe alerta
     if (sessionErrors.includes(message)) {
-      localStorage.clear();
+      localStorage.clear(); // Remove dados de autenticação
 
       const handleConfirmDialog = () => {
         confirmAlert({
-          closeOnClickOutside: false,
-          title: "Atenção",
-          message: "Sua sessão expirou, faça login novamente",
+          closeOnClickOutside: false, // Impede fechar clicando fora
+          title: "Atenção", // Título do alerta
+          message: "Sua sessão expirou, faça login novamente", // Mensagem exibida
           buttons: [
             {
               label: "Ok",
               onClick: () => {
-                redirect("/");
+                redirect("/"); // Redireciona para login
               },
             },
           ],
         });
       };
 
-      return handleConfirmDialog();
+      return handleConfirmDialog(); // Executa alerta
     }
 
     // Retorna outros erros normalmente
@@ -79,5 +82,7 @@ Api.interceptors.response.use(
   }
 );
 
-// Exporta instância configurada para uso em toda a aplicação
+// ============================================
+// EXPORTAÇÃO: Instância Axios configurada
+// ============================================
 export default Api;

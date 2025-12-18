@@ -16,13 +16,20 @@ import CartSummary from "@/components/cart/CartSummary";
 import { ShoppingCart, ArrowLeft, ArrowRight } from "lucide-react";
 import Link from "next/link";
 
+// ============================================================================
+// COMPONENTE DE PÁGINA
+// Responsável por exibir e gerenciar o carrinho de compras
+// ============================================================================
 export default function CarrinhoPage() {
-  const { items, clearCart } = useCart();
-  const { isAuthenticated } = useAuth();
-  const router = useRouter();
+  const { items, clearCart } = useCart(); // Itens do carrinho e função para limpar
+  const { isAuthenticated } = useAuth(); // Estado de autenticação do usuário
+  const router = useRouter(); // Controle de navegação
 
   // ============================================
   // IR PARA CHECKOUT
+  // ============================================
+  // Redireciona o usuário para o checkout
+  // Caso não esteja autenticado, direciona para login
   // ============================================
   const handleCheckout = () => {
     if (!isAuthenticated) {
@@ -35,10 +42,16 @@ export default function CarrinhoPage() {
 
   return (
     <>
+      {/* ============================================ */}
+      {/* HEAD DA PÁGINA */}
+      {/* ============================================ */}
       <Head>
         <title>Carrinho - Pizzaria Massa Nostra</title>
       </Head>
 
+      {/* ============================================ */}
+      {/* CONTAINER PRINCIPAL */}
+      {/* ============================================ */}
       <div className="container mx-auto px-4 py-8">
         {/* ============================================ */}
         {/* HEADER */}
@@ -53,7 +66,9 @@ export default function CarrinhoPage() {
             </p>
           </div>
 
-          {/* Botão limpar carrinho */}
+          {/* ============================================ */}
+          {/* BOTÃO LIMPAR CARRINHO */}
+          {/* ============================================ */}
           {items.length > 0 && (
             <button
               onClick={clearCart}
@@ -76,6 +91,8 @@ export default function CarrinhoPage() {
             <p className="text-gray-600 mb-8">
               Adicione pizzas deliciosas ao seu carrinho para continuar
             </p>
+
+            {/* Botão para acessar o cardápio */}
             <Link
               href="/cardapio"
               className="inline-flex items-center gap-2 bg-red-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-red-700 transition-colors"
@@ -91,7 +108,9 @@ export default function CarrinhoPage() {
         {/* ============================================ */}
         {items.length > 0 && (
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            {/* Coluna esquerda: Lista de itens */}
+            {/* ============================================ */}
+            {/* COLUNA ESQUERDA: LISTA DE ITENS */}
+            {/* ============================================ */}
             <div className="lg:col-span-2 space-y-4">
               {items.map((item) => (
                 <CartItem key={item.id} item={item} />
@@ -107,7 +126,9 @@ export default function CarrinhoPage() {
               </Link>
             </div>
 
-            {/* Coluna direita: Resumo */}
+            {/* ============================================ */}
+            {/* COLUNA DIREITA: RESUMO DO PEDIDO */}
+            {/* ============================================ */}
             <div className="lg:col-span-1">
               <div className="bg-white rounded-lg shadow-md p-6 sticky top-24">
                 <h2 className="text-xl font-bold mb-4">Resumo do Pedido</h2>
@@ -123,7 +144,7 @@ export default function CarrinhoPage() {
                   <ArrowRight className="w-5 h-5" />
                 </button>
 
-                {/* Aviso se não estiver logado */}
+                {/* Aviso para usuários não autenticados */}
                 {!isAuthenticated && (
                   <p className="text-xs text-gray-500 text-center mt-3">
                     Você será direcionado para fazer login

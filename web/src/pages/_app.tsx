@@ -16,13 +16,13 @@ import Image from "next/image";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 // ============================================
-// CONTEXTS (Auth e Cart)
+// CONTEXTOS (Auth e Cart)
 // ============================================
 import { AuthProvider } from "@/contexts/AuthContext";
 import { CartProvider } from "@/contexts/CartContext";
 
 // ============================================
-// REDUX (Estado global
+// REDUX (Estado global)
 // ============================================
 import { Provider } from "react-redux";
 import { store } from "@/lib/redux/store";
@@ -102,7 +102,7 @@ export default function App({ Component, pageProps }: AppProps) {
   const isNoLayoutPage = noLayoutPages.includes(pathname || "");
 
   // ============================================
-  // LAYOUT CONDICIONAL EXTRAÍDO
+  // LAYOUT CONDICIONAL
   // ============================================
   let layout;
   if (isAdminPage) {
@@ -146,7 +146,7 @@ export default function App({ Component, pageProps }: AppProps) {
   }
 
   // ============================================
-  // RENDER FINAL: Providers + layout
+  // RENDER FINAL: Providers + Layout
   // ============================================
   return (
     <QueryClientProvider client={queryClient}>

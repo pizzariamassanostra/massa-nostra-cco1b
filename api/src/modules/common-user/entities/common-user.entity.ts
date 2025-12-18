@@ -50,7 +50,7 @@ export class CommonUser {
   // AUTENTICAÇÃO E SEGURANÇA
   // ============================================
   @Column({ length: 255, nullable: true })
-  password_hash: string; // Senha criptografada com bcrypt (opcional - pode criar depois)
+  password: string; // Senha criptografada com bcrypt (opcional - pode criar depois)
 
   // ============================================
   // TERMOS DE USO E LGPD

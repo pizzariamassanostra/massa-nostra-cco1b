@@ -1,11 +1,19 @@
 // ============================================
 // COMPONENTE: FOOTER DO SITE
 // ============================================
+// Rodapé institucional da aplicação
+// Exibe informações da marca, links rápidos,
+// contato, redes sociais e direitos autorais
+// ============================================
 
 import React from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { Facebook, Instagram, Mail, Phone, MapPin } from "lucide-react";
+
+// ============================================
+// COMPONENTE: Footer
+// ============================================
 
 const Footer: React.FC = () => {
   return (
@@ -13,7 +21,7 @@ const Footer: React.FC = () => {
       <div className="container mx-auto px-4 py-12">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           {/* ============================================ */}
-          {/* COLUNA 1: SOBRE */}
+          {/* SOBRE A EMPRESA */}
           {/* ============================================ */}
           <div>
             <div className="flex items-center gap-2 mb-4">
@@ -22,6 +30,7 @@ const Footer: React.FC = () => {
               </div>
               <span className="text-xl font-bold">Massa Nostra</span>
             </div>
+
             <p className="text-gray-400 text-sm">
               As melhores pizzas de Montes Claros! Feitas com ingredientes
               frescos e muito amor.
@@ -29,10 +38,11 @@ const Footer: React.FC = () => {
           </div>
 
           {/* ============================================ */}
-          {/* COLUNA 2: LINKS RÁPIDOS */}
+          {/* LINKS RÁPIDOS */}
           {/* ============================================ */}
           <div>
             <h3 className="font-bold text-lg mb-4">Links Rápidos</h3>
+
             <ul className="space-y-2">
               <li>
                 <Link
@@ -42,6 +52,7 @@ const Footer: React.FC = () => {
                   Cardápio
                 </Link>
               </li>
+
               <li>
                 <Link
                   href="/meus-pedidos"
@@ -50,6 +61,7 @@ const Footer: React.FC = () => {
                   Meus Pedidos
                 </Link>
               </li>
+
               <li>
                 <Link
                   href="/suporte"
@@ -62,19 +74,25 @@ const Footer: React.FC = () => {
           </div>
 
           {/* ============================================ */}
-          {/* COLUNA 3: CONTATO */}
+          {/* CONTATO */}
           {/* ============================================ */}
           <div>
             <h3 className="font-bold text-lg mb-4">Contato</h3>
+
             <ul className="space-y-3">
+              {/* Telefone */}
               <li className="flex items-center gap-2 text-gray-400">
                 <Phone className="w-4 h-4" />
                 <span>(38) 3221-0000</span>
               </li>
+
+              {/* E-mail */}
               <li className="flex items-center gap-2 text-gray-400">
                 <Mail className="w-4 h-4" />
-                <span>contato@massanostra.com. br</span>
+                <span>contato@massanostra.com.br</span>
               </li>
+
+              {/* Endereço */}
               <li className="flex items-start gap-2 text-gray-400">
                 <MapPin className="w-4 h-4 mt-1" />
                 <span>
@@ -87,10 +105,12 @@ const Footer: React.FC = () => {
           </div>
 
           {/* ============================================ */}
-          {/* COLUNA 4: REDES SOCIAIS */}
+          {/* REDES SOCIAIS E HORÁRIO */}
           {/* ============================================ */}
           <div>
             <h3 className="font-bold text-lg mb-4">Redes Sociais</h3>
+
+            {/* Ícones de redes sociais */}
             <div className="flex gap-4">
               <a
                 href="https://facebook.com"
@@ -101,6 +121,7 @@ const Footer: React.FC = () => {
               >
                 <Facebook className="w-5 h-5" />
               </a>
+
               <a
                 href="https://instagram.com"
                 target="_blank"
@@ -110,6 +131,7 @@ const Footer: React.FC = () => {
               >
                 <Instagram className="w-5 h-5" />
               </a>
+
               <a
                 href="https://wa.me/5538999999999"
                 target="_blank"
@@ -126,7 +148,9 @@ const Footer: React.FC = () => {
               </a>
             </div>
 
-            {/* Horário de Funcionamento */}
+            {/* ============================================ */}
+            {/* HORÁRIO DE FUNCIONAMENTO */}
+            {/* ============================================ */}
             <div className="mt-6">
               <h4 className="font-semibold mb-2">Horário</h4>
               <p className="text-sm text-gray-400">
@@ -139,7 +163,7 @@ const Footer: React.FC = () => {
         </div>
 
         {/* ============================================ */}
-        {/* DIVISOR */}
+        {/* RODAPÉ LEGAL */}
         {/* ============================================ */}
         <div className="border-t border-gray-800 mt-8 pt-8">
           <div className="text-center text-gray-400 text-sm">
@@ -153,5 +177,9 @@ const Footer: React.FC = () => {
     </footer>
   );
 };
+
+// ============================================
+// EXPORTAÇÃO
+// ============================================
 
 export default Footer;

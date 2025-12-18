@@ -1,9 +1,6 @@
 // ============================================
 // ENUM: STATUS DOS PEDIDOS
 // ============================================
-// Define todos os status possíveis de um pedido
-// Sincronizado com a API NestJS
-// ============================================
 
 export enum OrderStatus {
   PENDING = "pending", // Aguardando confirmação

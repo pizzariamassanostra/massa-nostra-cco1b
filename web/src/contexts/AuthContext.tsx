@@ -18,7 +18,7 @@ import { CommonUser } from "@/common/interfaces/common-users.interface";
 import { toast } from "react-hot-toast";
 
 // ============================================
-// INTERFACES
+// INTERFACES / TIPOS
 // ============================================
 
 interface LoginDto {
@@ -76,7 +76,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   }, []);
 
   // ============================================
-  // LOGIN
+  // FUNÇÃO: Login
   // ============================================
   const login = async (data: LoginDto) => {
     try {
@@ -94,7 +94,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   };
 
   // ============================================
-  // CADASTRO
+  // FUNÇÃO: Cadastro
   // ============================================
   const register = async (data: RegisterDto) => {
     try {
@@ -113,7 +113,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   };
 
   // ============================================
-  // LOGOUT
+  // FUNÇÃO: Logout
   // ============================================
   const logout = () => {
     authService.logout();
@@ -122,7 +122,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   };
 
   // ============================================
-  // ATUALIZAR USUÁRIO
+  // FUNÇÃO: Atualizar usuário
   // ============================================
   const updateUser = (updatedUser: CommonUser) => {
     setUser(updatedUser);

@@ -1,7 +1,6 @@
 // ============================================
 // EXPORTAÇÕES DE INTERFACES DO PRODUTO
 // ============================================
-// Exportar interfaces de produtos e categorias
 export type {
   Product,
   ProductCategory,
@@ -37,12 +36,6 @@ export type { CartItem } from "@/contexts/CartContext";
 // ============================================
 // EXPORTAÇÕES DE ENUMS (VALORES CONSTANTES)
 // ============================================
-
-// Status possíveis de um pedido
 export { OrderStatus } from "@/common/enum/order-status.enum";
-
-// Métodos de pagamento disponíveis
 export { PaymentMethod } from "@/common/enum/payment-method.enum";
-
-// Status possíveis de um pagamento
 export { PaymentStatus } from "@/common/enum/payment-status.enum";

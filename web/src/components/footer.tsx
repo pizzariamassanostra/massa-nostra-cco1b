@@ -1,12 +1,19 @@
+// ============================================
+// COMPONENTE: FOOTER
+// ============================================
+
 import Link from "next/link";
 import Image from "next/image";
 
+// ============================================
+// COMPONENTE
+// ============================================
 export default function Footer() {
   return (
     <footer className="bg-gray-900 text-white py-12 mt-auto">
       <div className="container mx-auto px-4">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          {/* Logo e Descrição */}
+          {/* Logo e descrição */}
           <div>
             <div className="mb-4">
               <Image
@@ -23,7 +30,7 @@ export default function Footer() {
             </p>
           </div>
 
-          {/* Links */}
+          {/* Links rápidos */}
           <div>
             <h3 className="text-lg font-bold mb-4">Links Rápidos</h3>
             <ul className="space-y-2">
@@ -54,7 +61,7 @@ export default function Footer() {
             </ul>
           </div>
 
-          {/* Redes Sociais */}
+          {/* Redes sociais */}
           <div>
             <h3 className="text-lg font-bold mb-4">Redes Sociais</h3>
             <div className="flex gap-4">
@@ -114,6 +121,7 @@ export default function Footer() {
           </div>
         </div>
 
+        {/* Rodapé inferior */}
         <div className="border-t border-gray-800 mt-8 pt-8 text-center text-gray-400">
           <p>
             &copy; 2025 Pizzaria Massa Nostra. Todos os direitos reservados.

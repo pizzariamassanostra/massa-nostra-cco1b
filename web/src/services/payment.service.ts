@@ -7,20 +7,22 @@
 
 import api from "./api.service";
 
-/**
- * Base global da API (Render ou Localhost)
- * — Coloquei no topo para evitar erros de variável não encontrada
- */
+// ============================================
+// CONFIGURAÇÃO BASE DA API
+// ============================================
+// Define a URL base da API (Render ou Localhost)
+// ============================================
 const API_BASE =
   process.env.NEXT_PUBLIC_API_URL ||
   (typeof window !== "undefined"
     ? window.location.origin
     : "http://localhost:3001");
 
-/**
- * Interface para resposta do QR Code PIX
- * Retornado pela API após gerar pagamento
- */
+// ============================================
+// INTERFACES DE TIPOS
+// ============================================
+// Estruturas de dados retornadas e enviadas para a API
+// ============================================
 interface PixQrCodeResponse {
   ok: boolean;
   message: string;
@@ -33,35 +35,19 @@ interface PixQrCodeResponse {
   };
 }
 
-/**
- * Interface para dados de entrada para gerar PIX
- */
+// Estrutura de dados para requisição de geração de PIX
 interface GeneratePixRequest {
   orderId: number; // ID do pedido criado
   amount: number; // Valor total em CENTAVOS (ex: R$ 50,00 = 5000)
   email: string; // E-mail do cliente
 }
 
-/**
- * ============================================
- * CLASS: PAYMENT SERVICE
- * ============================================
- * Métodos para gerenciar pagamentos
- */
+// ============================================================================
+// CLASSE DE SERVIÇO
+// Responsável por gerenciar todas as requisições relacionadas a pagamentos
+// ============================================================================
 class PaymentService {
-  /**
-   * Gera QR Code PIX para pagamento
-   * Chamado após cliente criar pedido e selecionar PIX
-   *
-   * @param orderId - ID do pedido criado
-   * @param totalInCents - Valor total em centavos (R$ 50,00 = 5000)
-   * @param customerEmail - E-mail do cliente
-   * @returns Resposta com QR Code e dados de pagamento
-   *
-   * @example
-   * const response = await paymentService.generatePixQrCode(15, 5000, 'lucas@email.com');
-   * // Retorna: { qr_code, qr_code_base64, payment_id, ... }
-   */
+  // Gera QR Code PIX para pagamento
   async generatePixQrCode(
     orderId: number,
     totalInCents: number,
@@ -105,19 +91,12 @@ class PaymentService {
       const data: PixQrCodeResponse = await response.json();
       return data;
     } catch (error) {
-      // Log do erro para debug
       console.error("Erro ao gerar PIX:", error);
       throw error;
     }
   }
 
-  /**
-   * Valida se pagamento PIX foi confirmado
-   * Chamado periodicamente enquanto modal está aberto
-   *
-   * @param paymentId - ID do pagamento retornado ao gerar QR Code
-   * @returns Status atual do pagamento
-   */
+  // Valida se pagamento PIX foi confirmado
   async validatePixPayment(paymentId: string) {
     try {
       const token =
@@ -155,5 +134,4 @@ class PaymentService {
 // ============================================
 // EXPORTAR INSTÂNCIA ÚNICA
 // ============================================
-// Usar em toda aplicação como singleton
 export const paymentService = new PaymentService();

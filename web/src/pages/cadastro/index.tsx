@@ -15,9 +15,13 @@ import { Eye, EyeOff } from "lucide-react";
 import { validateCpf, formatCpf } from "@/common/helpers/format-cpf";
 import { formatPhone } from "@/common/helpers/format-phone";
 
+// ============================================================================
+// COMPONENTE DE PÁGINA
+// Responsável pelo cadastro de novos usuários
+// ============================================================================
 export default function CadastroPage() {
-  const { register, isAuthenticated } = useAuth();
-  const router = useRouter();
+  const { register, isAuthenticated } = useAuth(); // Função de registro e estado de autenticação
+  const router = useRouter(); // Controle de navegação
 
   // ============================================
   // ESTADOS DO FORMULÁRIO
@@ -35,10 +39,10 @@ export default function CadastroPage() {
     accept_promotions: false,
   });
 
-  const [showPassword, setShowPassword] = useState(false);
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const [loading, setLoading] = useState(false);
-  const [errors, setErrors] = useState<Record<string, string>>({});
+  const [showPassword, setShowPassword] = useState(false); // Exibir senha
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false); // Exibir confirmação de senha
+  const [loading, setLoading] = useState(false); // Estado de carregamento
+  const [errors, setErrors] = useState<Record<string, string>>({}); // Erros de validação
 
   // ============================================
   // REDIRECIONAR SE JÁ ESTIVER AUTENTICADO
@@ -52,6 +56,7 @@ export default function CadastroPage() {
   // ============================================
   // ATUALIZAR CAMPO DO FORMULÁRIO
   // ============================================
+  // Atualiza valores, aplica formatações e limpa erros
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value, type, checked } = e.target;
 
@@ -82,6 +87,7 @@ export default function CadastroPage() {
   // ============================================
   // VALIDAR FORMULÁRIO
   // ============================================
+  // Executa validações de todos os campos
   const validateForm = (): boolean => {
     const newErrors: Record<string, string> = {};
 
@@ -149,6 +155,7 @@ export default function CadastroPage() {
   // ============================================
   // SUBMETER FORMULÁRIO
   // ============================================
+  // Envia os dados para cadastro
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -178,10 +185,16 @@ export default function CadastroPage() {
 
   return (
     <>
+      {/* ============================================ */}
+      {/* HEAD DA PÁGINA */}
+      {/* ============================================ */}
       <Head>
         <title>Cadastro - Pizzaria Massa Nostra</title>
       </Head>
 
+      {/* ============================================ */}
+      {/* CONTAINER PRINCIPAL */}
+      {/* ============================================ */}
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-red-600 to-red-700 px-4 py-8">
         <div className="bg-white rounded-lg shadow-xl p-8 w-full max-w-2xl">
           {/* ============================================ */}
@@ -194,12 +207,13 @@ export default function CadastroPage() {
             <h1 className="text-3xl font-bold text-gray-800">Criar Conta</h1>
             <p className="text-gray-600 mt-2">Cadastre-se para fazer pedidos</p>
           </div>
-
           {/* ============================================ */}
           {/* FORMULÁRIO */}
           {/* ============================================ */}
           <form onSubmit={handleSubmit} className="space-y-4">
-            {/* Nome Completo */}
+            {/* ============================================ */}
+            {/* CAMPO: NOME COMPLETO */}
+            {/* ============================================ */}
             <div>
               <label
                 htmlFor="name"
@@ -223,7 +237,9 @@ export default function CadastroPage() {
               )}
             </div>
 
-            {/* CPF e Data de Nascimento (2 colunas) */}
+            {/* ============================================ */}
+            {/* CPF E DATA DE NASCIMENTO */}
+            {/* ============================================ */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <label
@@ -274,7 +290,9 @@ export default function CadastroPage() {
               </div>
             </div>
 
-            {/* Telefones (2 colunas) */}
+            {/* ============================================ */}
+            {/* TELEFONES */}
+            {/* ============================================ */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <label
@@ -318,7 +336,9 @@ export default function CadastroPage() {
               </div>
             </div>
 
-            {/* Email */}
+            {/* ============================================ */}
+            {/* EMAIL */}
+            {/* ============================================ */}
             <div>
               <label
                 htmlFor="email"
@@ -342,7 +362,9 @@ export default function CadastroPage() {
               )}
             </div>
 
-            {/* Senhas (2 colunas) */}
+            {/* ============================================ */}
+            {/* SENHAS */}
+            {/* ============================================ */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <label
@@ -421,7 +443,9 @@ export default function CadastroPage() {
               </div>
             </div>
 
-            {/* Checkboxes (LGPD) */}
+            {/* ============================================ */}
+            {/* CHECKBOXES - LGPD */}
+            {/* ============================================ */}
             <div className="space-y-3">
               <label className="flex items-start gap-2">
                 <input
@@ -452,7 +476,9 @@ export default function CadastroPage() {
               {errors.accept_terms && (
                 <p className="text-red-500 text-xs">{errors.accept_terms}</p>
               )}
-
+              {/* ============================================ */}
+              {/* CHECKBOX: PROMOÇÕES */}
+              {/* ============================================ */}
               <label className="flex items-start gap-2">
                 <input
                   type="checkbox"
@@ -467,7 +493,9 @@ export default function CadastroPage() {
               </label>
             </div>
 
-            {/* Botão Submit */}
+            {/* ============================================ */}
+            {/* BOTÃO: SUBMIT */}
+            {/* ============================================ */}
             <button
               type="submit"
               disabled={loading}
@@ -478,7 +506,7 @@ export default function CadastroPage() {
           </form>
 
           {/* ============================================ */}
-          {/* LINKS */}
+          {/* LINKS AUXILIARES */}
           {/* ============================================ */}
           <div className="mt-6 text-center space-y-3">
             <p className="text-gray-600">

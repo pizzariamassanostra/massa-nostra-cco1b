@@ -1,9 +1,9 @@
 // ============================================
 // PÁGINA: SUPORTE
 // ============================================
-// Página de suporte da Pizzaria Massa Nostra.
+// Página de suporte da Pizzaria Massa Nostra
 // Inclui canais de contato (WhatsApp, Telefone, E-mail, Endereço)
-// e seção de Perguntas Frequentes (FAQ).
+// e seção de Perguntas Frequentes (FAQ)
 // ============================================
 
 import Head from "next/head";
@@ -13,19 +13,25 @@ import { Phone, Mail, MapPin } from "lucide-react";
 export default function SuportePage() {
   return (
     <>
-      {/* Head da página com título */}
+      {/* ============================================ */}
+      {/* HEAD DA PÁGINA */}
+      {/* ============================================ */}
       <Head>
         <title>Suporte - Pizzaria Massa Nostra</title>
       </Head>
 
-      {/* Container principal */}
+      {/* ============================================ */}
+      {/* CONTAINER PRINCIPAL */}
+      {/* ============================================ */}
       <div className="container mx-auto px-4 py-12">
         {/* Título da página */}
         <h1 className="text-4xl font-bold text-gray-800 mb-8 text-center">
           Central de Suporte
         </h1>
 
-        {/* Grid com canais de contato */}
+        {/* ============================================ */}
+        {/* CANAIS DE CONTATO */}
+        {/* ============================================ */}
         <div className="max-w-4xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-6">
           {/* WhatsApp */}
           <div className="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow">
@@ -72,7 +78,7 @@ export default function SuportePage() {
             </a>
           </div>
 
-          {/* Email */}
+          {/* E-mail */}
           <div className="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow">
             <div className="flex items-center gap-4 mb-4">
               <div className="bg-red-100 p-3 rounded-full">
@@ -102,12 +108,14 @@ export default function SuportePage() {
             <p className="text-gray-600 mb-2">Rua das Pizzas, 123 - Centro</p>
             <p className="text-gray-600 mb-4">Montes Claros - MG</p>
             <p className="text-gray-600">
-              <strong>Horário:</strong> Seg-Dom, 18h-23h
+              <strong>Horário:</strong> Ter-Dom, 18h-23h
             </p>
           </div>
         </div>
 
-        {/* FAQ - Perguntas Frequentes */}
+        {/* ============================================ */}
+        {/* FAQ - PERGUNTAS FREQUENTES */}
+        {/* ============================================ */}
         <div className="max-w-4xl mx-auto mt-12">
           <h2 className="text-3xl font-bold text-gray-800 mb-6 text-center">
             Perguntas Frequentes

@@ -5,6 +5,8 @@
 // Timeline de status
 // Token de entrega
 // Opção de cancelar pedido
+// Correções aplicadas em formatação de preço,
+// endereço do pedido e propriedades opcionais
 // ============================================
 
 import React, { useState, useEffect, useCallback } from "react";
@@ -20,7 +22,13 @@ import { ptBR } from "date-fns/locale";
 import { toast } from "react-hot-toast";
 import Link from "next/link";
 
+// ============================================
+// COMPONENTE - DetalhePedidoPage
+// ============================================
 export default function DetalhePedidoPage() {
+  // ============================================
+  // ROUTER E AUTENTICAÇÃO
+  // ============================================
   const router = useRouter();
   const { id } = router.query;
   const { isAuthenticated } = useAuth();
@@ -33,13 +41,15 @@ export default function DetalhePedidoPage() {
   const [cancelling, setCancelling] = useState(false);
 
   // ============================================
-  // CARREGAR PEDIDO
+  // FUNÇÃO: Carregar pedido
+  // ============================================
+  // Busca os dados do pedido pelo ID
   // ============================================
   const loadOrder = useCallback(async () => {
     try {
       setLoading(true);
       const response = await orderService.getById(Number(id));
-      setOrder(response.order);
+      setOrder(response);
     } catch (error) {
       console.error("Erro ao carregar pedido:", error);
       toast.error("Pedido não encontrado");
@@ -50,7 +60,10 @@ export default function DetalhePedidoPage() {
   }, [id, router]);
 
   // ============================================
-  // VERIFICAR AUTENTICAÇÃO
+  // EFEITO: Verificar autenticação
+  // ============================================
+  // Redireciona para login se não autenticado
+  // Carrega pedido quando ID estiver disponível
   // ============================================
   useEffect(() => {
     if (!isAuthenticated) {
@@ -64,7 +77,10 @@ export default function DetalhePedidoPage() {
   }, [isAuthenticated, id, router, loadOrder]);
 
   // ============================================
-  // CANCELAR PEDIDO
+  // FUNÇÃO: Cancelar pedido
+  // ============================================
+  // Solicita confirmação do usuário
+  // Cancela o pedido se confirmado
   // ============================================
   const handleCancelOrder = async () => {
     if (!order) return;
@@ -91,10 +107,16 @@ export default function DetalhePedidoPage() {
   };
 
   // ============================================
-  // FORMATAR PREÇO
+  // FUNÇÃO: Formatar preço
   // ============================================
-  const formatPrice = (priceInCents: string) => {
-    const price = Number.parseFloat(priceInCents) / 100;
+  // Converte centavos para moeda brasileira
+  // ============================================
+  const formatPrice = (priceInCents: string | number) => {
+    const numPrice =
+      typeof priceInCents === "string"
+        ? Number.parseFloat(priceInCents)
+        : priceInCents;
+    const price = numPrice / 100;
     return new Intl.NumberFormat("pt-BR", {
       style: "currency",
       currency: "BRL",
@@ -102,7 +124,9 @@ export default function DetalhePedidoPage() {
   };
 
   // ============================================
-  // FORMATAR DATA
+  // FUNÇÃO: Formatar data
+  // ============================================
+  // Formata data no padrão brasileiro
   // ============================================
   const formatDate = (dateString: string) => {
     return format(new Date(dateString), "dd/MM/yyyy 'às' HH:mm", {
@@ -111,7 +135,7 @@ export default function DetalhePedidoPage() {
   };
 
   // ============================================
-  // TRADUZIR MÉTODO DE PAGAMENTO
+  // FUNÇÃO: Traduzir método de pagamento
   // ============================================
   const translatePaymentMethod = (method: string) => {
     const translations: Record<string, string> = {
@@ -124,7 +148,7 @@ export default function DetalhePedidoPage() {
   };
 
   // ============================================
-  // VERIFICAR SE PODE CANCELAR
+  // VERIFICAÇÃO: Pode cancelar pedido
   // ============================================
   const canCancel = order && ["pending", "confirmed"].includes(order.status);
 
@@ -183,7 +207,7 @@ export default function DetalhePedidoPage() {
                 </div>
               )}
 
-              {/* Botão Cancelar */}
+              {/* BOTÃO CANCELAR */}
               {canCancel && (
                 <button
                   onClick={handleCancelOrder}
@@ -196,14 +220,20 @@ export default function DetalhePedidoPage() {
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-              {/* COLUNA ESQUERDA: TIMELINE */}
+              {/* ============================================ */}
+              {/* COLUNA ESQUERDA: TIMELINE DO PEDIDO */}
+              {/* ============================================ */}
               <div className="lg:col-span-2">
                 <OrderTimeline status={order.status} />
               </div>
 
-              {/* COLUNA DIREITA: DETALHES */}
+              {/* ============================================ */}
+              {/* COLUNA DIREITA: DETALHES DO PEDIDO */}
+              {/* ============================================ */}
               <div className="lg:col-span-1 space-y-6">
-                {/* Itens do Pedido */}
+                {/* ============================================ */}
+                {/* SEÇÃO: ITENS DO PEDIDO */}
+                {/* ============================================ */}
                 <div className="bg-white rounded-lg shadow-md p-6">
                   <h3 className="font-bold text-lg mb-4">Itens do Pedido</h3>
                   <div className="space-y-3">
@@ -241,27 +271,35 @@ export default function DetalhePedidoPage() {
                     ))}
                   </div>
 
+                  {/* ============================================ */}
+                  {/* SEÇÃO: SUBTOTAL / TAXA / DESCONTO */}
+                  {/* ============================================ */}
                   <div className="border-t pt-4 mt-4 space-y-2">
                     <div className="flex justify-between text-sm">
                       <span className="text-gray-600">Subtotal</span>
                       <span className="font-semibold">
-                        {formatPrice(order.subtotal)}
+                        {order.subtotal
+                          ? formatPrice(order.subtotal)
+                          : formatPrice(order.total)}
                       </span>
                     </div>
                     <div className="flex justify-between text-sm">
                       <span className="text-gray-600">Taxa de Entrega</span>
                       <span className="font-semibold">
-                        {formatPrice(order.delivery_fee)}
+                        {order.delivery_fee
+                          ? formatPrice(order.delivery_fee)
+                          : "R$ 0,00"}
                       </span>
                     </div>
-                    {Number.parseFloat(order.discount) > 0 && (
-                      <div className="flex justify-between text-sm">
-                        <span className="text-gray-600">Desconto</span>
-                        <span className="font-semibold text-green-600">
-                          -{formatPrice(order.discount)}
-                        </span>
-                      </div>
-                    )}
+                    {order.discount &&
+                      Number.parseFloat(String(order.discount)) > 0 && (
+                        <div className="flex justify-between text-sm">
+                          <span className="text-gray-600">Desconto</span>
+                          <span className="font-semibold text-green-600">
+                            -{formatPrice(order.discount)}
+                          </span>
+                        </div>
+                      )}
                     <div className="border-t pt-2 flex justify-between text-lg font-bold">
                       <span>Total</span>
                       <span className="text-red-600">
@@ -271,40 +309,41 @@ export default function DetalhePedidoPage() {
                   </div>
                 </div>
 
-                {/* Endereço de Entrega */}
+                {/* ============================================ */}
+                {/* SEÇÃO: ENDEREÇO DE ENTREGA */}
+                {/* ============================================ */}
                 <div className="bg-white rounded-lg shadow-md p-6">
                   <h3 className="font-bold text-lg mb-4 flex items-center gap-2">
                     <MapPin className="w-5 h-5 text-red-600" />
                     Endereço de Entrega
                   </h3>
-
-                  {order.address && (
+                  {order.delivery_address && (
                     <div className="text-sm text-gray-700">
                       <p className="font-semibold">
-                        {order.address.street}, {order.address.number}
+                        {order.delivery_address.street},{" "}
+                        {order.delivery_address.number}
                       </p>
-
-                      {order.address.complement && (
-                        <p>{order.address.complement}</p>
+                      {order.delivery_address.complement && (
+                        <p>{order.delivery_address.complement}</p>
                       )}
-
                       <p>
-                        {order.address.neighborhood}, {order.address.city}/
-                        {order.address.state}
+                        {order.delivery_address.neighborhood},{" "}
+                        {order.delivery_address.city}/
+                        {order.delivery_address.state}
                       </p>
-
-                      <p>CEP: {order.address.zip_code}</p>
-
-                      {order.address.reference && (
+                      <p>CEP: {order.delivery_address.zip_code}</p>
+                      {order.delivery_address.reference && (
                         <p className="text-gray-500 mt-2">
-                          Ref: {order.address.reference}
+                          Ref: {order.delivery_address.reference}
                         </p>
                       )}
                     </div>
                   )}
                 </div>
 
-                {/* Forma de Pagamento */}
+                {/* ============================================ */}
+                {/* SEÇÃO: FORMA DE PAGAMENTO */}
+                {/* ============================================ */}
                 <div className="bg-white rounded-lg shadow-md p-6">
                   <h3 className="font-bold text-lg mb-4 flex items-center gap-2">
                     <CreditCard className="w-5 h-5 text-red-600" />
@@ -315,7 +354,9 @@ export default function DetalhePedidoPage() {
                   </p>
                 </div>
 
-                {/* Informações de Contato */}
+                {/* ============================================ */}
+                {/* SEÇÃO: INFORMAÇÕES DE CONTATO */}
+                {/* ============================================ */}
                 <div className="bg-white rounded-lg shadow-md p-6">
                   <h3 className="font-bold text-lg mb-4 flex items-center gap-2">
                     <Phone className="w-5 h-5 text-red-600" />

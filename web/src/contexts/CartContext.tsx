@@ -17,7 +17,7 @@ import React, {
 import { toast } from "react-hot-toast";
 
 // ============================================
-// INTERFACES
+// INTERFACES / TIPOS
 // ============================================
 
 export interface CartItem {
@@ -75,7 +75,7 @@ export const CartProvider: React.FC<CartProviderProps> = ({ children }) => {
   const deliveryFee = 5;
 
   // ============================================
-  // CARREGAR DO LOCALSTORAGE
+  // EFEITO: Carregar carrinho do localStorage
   // ============================================
   useEffect(() => {
     if (!globalThis.window) return;
@@ -92,7 +92,7 @@ export const CartProvider: React.FC<CartProviderProps> = ({ children }) => {
   }, []);
 
   // ============================================
-  // SALVAR NO LOCALSTORAGE
+  // EFEITO: Salvar carrinho no localStorage
   // ============================================
   useEffect(() => {
     if (globalThis.window) {
@@ -101,7 +101,7 @@ export const CartProvider: React.FC<CartProviderProps> = ({ children }) => {
   }, [items]);
 
   // ============================================
-  // ADICIONAR ITEM
+  // FUNÇÃO: Adicionar item ao carrinho
   // ============================================
   const addItem = useCallback((item: CartItem) => {
     setItems((prevItems) => {
@@ -138,7 +138,7 @@ export const CartProvider: React.FC<CartProviderProps> = ({ children }) => {
   }, []);
 
   // ============================================
-  // REMOVER ITEM
+  // FUNÇÃO: Remover item do carrinho
   // ============================================
   const removeItem = useCallback((id: string) => {
     setItems((prev) => prev.filter((item) => item.id !== id));
@@ -146,7 +146,7 @@ export const CartProvider: React.FC<CartProviderProps> = ({ children }) => {
   }, []);
 
   // ============================================
-  // ATUALIZAR QUANTIDADE
+  // FUNÇÃO: Atualizar quantidade do item
   // ============================================
   const updateQuantity = useCallback((id: string, quantity: number) => {
     if (quantity <= 0) {
@@ -169,7 +169,7 @@ export const CartProvider: React.FC<CartProviderProps> = ({ children }) => {
   }, []);
 
   // ============================================
-  // LIMPAR CARRINHO
+  // FUNÇÃO: Limpar carrinho
   // ============================================
   const clearCart = useCallback(() => {
     setItems([]);
@@ -178,7 +178,7 @@ export const CartProvider: React.FC<CartProviderProps> = ({ children }) => {
   }, []);
 
   // ============================================
-  // ABRIR/FECHAR
+  // FUNÇÕES: Abrir e fechar carrinho
   // ============================================
   const openCart = useCallback(() => setIsOpen(true), []);
   const closeCart = useCallback(() => setIsOpen(false), []);

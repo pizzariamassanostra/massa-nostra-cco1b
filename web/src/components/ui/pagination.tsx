@@ -1,5 +1,5 @@
 // ============================================
-// COMPONENTE: DATA TABLE PAGINATION
+// COMPONENTE: TABELA DE PAGINAÇÃO
 // ============================================
 // Componente de paginação para tabelas usando TanStack Table.
 // Permite selecionar quantidade de itens por página e navegar
@@ -16,11 +16,17 @@ import {
 } from "./select";
 import { ArrowLeft, ArrowRight } from "lucide-react";
 
-// Props do componente de paginação
+// ============================================
+// INTERFACES
+// ============================================
 interface DataTablePaginationProps<T> {
   table: Table<T>; // Instância da tabela
   itemsCount?: number; // Quantidade total de itens (opcional)
 }
+
+// ============================================
+// COMPONENTE
+// ============================================
 
 export const DataTablePagination = <T,>({
   table,

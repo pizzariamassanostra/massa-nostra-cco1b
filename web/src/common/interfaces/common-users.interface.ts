@@ -1,43 +1,53 @@
 // ============================================
-// INTERFACE: USUÁRIO COMUM (CLIENTE)
+// MODELOS / INTERFACES: USUÁRIO COMUM (CLIENTE)
+// ============================================
+
+// ============================================
+// INTERFACE: CommonUser
 // ============================================
 export interface CommonUser {
-  id: number;
-  name: string;
-  cpf: string;
-  birth_date: string;
-  phone: string;
-  phone_alternative: string | null;
-  email: string;
-  accept_terms: boolean;
-  accept_promotions: boolean;
-  created_at: string;
-  updated_at: string;
+  id: number; // ID do usuário
+  name: string; // Nome completo
+  cpf: string; // CPF do usuário
+  birth_date: string; // Data de nascimento
+  phone: string; // Telefone principal
+  phone_alternative: string | null; // Telefone alternativo (opcional)
+  email: string; // E-mail do usuário
+  accept_terms: boolean; // Aceitou os termos de uso
+  accept_promotions: boolean; // Aceitou receber promoções
+  created_at: string; // Data de criação do registro
+  updated_at: string; // Data da última atualização
 }
 
-// DTO para cadastro
+// ============================================
+// DTO: RegisterDto (Cadastro de Usuário)
+// ============================================
 export interface RegisterDto {
-  name: string;
-  cpf: string;
-  birth_date: string;
-  phone: string;
-  phone_alternative?: string;
-  email: string;
-  password: string;
-  accept_terms: boolean;
-  accept_promotions: boolean;
+  name: string; // Nome completo
+  cpf: string; // CPF
+  birth_date: string; // Data de nascimento
+  phone: string; // Telefone principal
+  phone_alternative?: string; // Telefone alternativo (opcional)
+  email: string; // E-mail
+  password: string; // Senha de acesso
+  accept_terms: boolean; // Aceite dos termos obrigatórios
+  accept_promotions: boolean; // Aceite para receber promoções
 }
 
-// DTO para login
+// ============================================
+// DTO: LoginDto (Login do Usuário)
+// ============================================
 export interface LoginDto {
-  username: string; // Email ou telefone
-  password: string;
+  username: string; // E-mail ou telefone
+  password: string; // Senha
 }
 
-// Resposta de login
+// ============================================
+// INTERFACE: LoginResponse (Resposta de Autenticação)
+// ============================================
 export interface LoginResponse {
-  ok: boolean;
-  message: string;
-  user: CommonUser;
-  access_token: string;
+  ok: boolean; // Indica sucesso na operação
+  message: string; // Mensagem retornada pela API
+  user: CommonUser; // Dados do usuário autenticado
+  access_token: string; // Token JWT
 }

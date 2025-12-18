@@ -7,32 +7,38 @@
 
 import { useEffect, useState } from "react";
 
+// ============================================
+// HOOK PRINCIPAL
+// ============================================
 export function useWindowSize() {
-  // Estado inicial com largura e altura = 0
+  // Estado com dimensões da janela
   const [windowSize, setWindowSize] = useState({
-    width: 0,
-    height: 0,
+    width: 0, // Largura da janela
+    height: 0, // Altura da janela
   });
 
+  // ============================================
+  // EFEITO: Monitorar resize da janela
+  // ============================================
   useEffect(() => {
-    // Função que atualiza estado com dimensões da janela
+    // Atualiza estado com dimensões atuais
     function handleResize() {
       setWindowSize({
-        width: window.innerWidth,
-        height: window.innerHeight,
+        width: window.innerWidth, // Captura largura atual
+        height: window.innerHeight, // Captura altura atual
       });
     }
 
-    // Adiciona listener para evento de resize
+    // Registrar listener de resize
     window.addEventListener("resize", handleResize);
 
-    // Executa uma vez ao montar para capturar tamanho inicial
+    // Executar imediatamente para valor inicial
     handleResize();
 
-    // Remove listener ao desmontar componente
+    // Cleanup: remover listener ao desmontar
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  // Retorna objeto com largura e altura atuais
+  // Retornar dimensões atuais
   return windowSize;
 }

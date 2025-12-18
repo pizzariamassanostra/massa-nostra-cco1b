@@ -1,14 +1,14 @@
 // ============================================
-// FUNÇÕES: TRADUÇÃO DE STATUS DO PEDIDO
-// ============================================
-// Fornece utilitários para:
-// - Traduzir status de pedido (enum) para texto em português.
-// - Definir classes de cor (Tailwind) para badges de status.
+// FUNÇÕES UTILITÁRIAS: STATUS DO PEDIDO
 // ============================================
 
 import { OrderStatus } from "../enum/order-status.enum";
 
-// Retorna o texto em português correspondente ao status do pedido
+// ============================================
+// FUNÇÃO: translateOrderStatus
+// ============================================
+// Retorna a descrição em português do status do pedido
+// ============================================
 export function translateOrderStatus(status: OrderStatus): string {
   const translations: Record<OrderStatus, string> = {
     [OrderStatus.PENDING]: "Aguardando Confirmação", // Pedido criado, aguardando confirmação
@@ -19,11 +19,15 @@ export function translateOrderStatus(status: OrderStatus): string {
     [OrderStatus.CANCELLED]: "Cancelado", // Pedido cancelado
   };
 
-  // Caso não exista tradução, retorna o próprio status
+  // Retorna a tradução correspondente ou o próprio status como fallback
   return translations[status] || status;
 }
 
-// Retorna classes de cor para estilização do badge de status
+// ============================================
+// FUNÇÃO: getOrderStatusColor
+// ============================================
+// Retorna classes CSS de cor conforme o status do pedido
+// ============================================
 export function getOrderStatusColor(status: OrderStatus): string {
   const colors: Record<OrderStatus, string> = {
     [OrderStatus.PENDING]: "bg-yellow-100 text-yellow-800", // Em espera
@@ -34,6 +38,6 @@ export function getOrderStatusColor(status: OrderStatus): string {
     [OrderStatus.CANCELLED]: "bg-red-100 text-red-800", // Cancelado
   };
 
-  // Caso não exista cor definida, usa padrão cinza
+  // Retorna a cor correspondente ou uma cor padrão
   return colors[status] || "bg-gray-100 text-gray-800";
 }

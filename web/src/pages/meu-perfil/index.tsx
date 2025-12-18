@@ -1,5 +1,5 @@
 // ============================================
-// PÁGINA: MEU PERFIL - Pizzaria Massa Nostra
+// PÁGINA: MEU PERFIL
 // ============================================
 // Visualização e edição dos dados do usuário
 // Gerenciamento de endereços
@@ -21,7 +21,13 @@ import { toast } from "react-hot-toast";
 import { formatCpf } from "@/common/helpers/format-cpf";
 import { formatPhone } from "@/common/helpers/format-phone";
 
+// ============================================
+// COMPONENTE - MeuPerfilPage
+// ============================================
 export default function MeuPerfilPage() {
+  // ============================================
+  // AUTENTICAÇÃO E ROTEAMENTO
+  // ============================================
   const { isAuthenticated, user, updateUser, logout } = useAuth();
   const router = useRouter();
 
@@ -33,7 +39,9 @@ export default function MeuPerfilPage() {
   const [addresses, setAddresses] = useState<Address[]>([]);
   const [showNewAddressForm, setShowNewAddressForm] = useState(false);
 
-  // Dados do formulário de perfil
+  // ============================================
+  // ESTADO: Dados do formulário de perfil
+  // ============================================
   const [formData, setFormData] = useState({
     name: "",
     phone: "",
@@ -41,7 +49,9 @@ export default function MeuPerfilPage() {
     email: "",
   });
 
-  // Dados do formulário de novo endereço
+  // ============================================
+  // ESTADO: Dados do formulário de novo endereço
+  // ============================================
   const [newAddress, setNewAddress] = useState<CreateAddressDto>({
     street: "",
     number: "",
@@ -55,7 +65,10 @@ export default function MeuPerfilPage() {
   });
 
   // ============================================
-  // VERIFICAR AUTENTICAÇÃO
+  // EFEITO: Verificar autenticação
+  // ============================================
+  // Redireciona para login se não autenticado
+  // Inicializa dados do formulário e endereços
   // ============================================
   useEffect(() => {
     if (!isAuthenticated) {
@@ -76,7 +89,9 @@ export default function MeuPerfilPage() {
   }, [isAuthenticated, user, router]);
 
   // ============================================
-  // CARREGAR ENDEREÇOS
+  // FUNÇÃO: Carregar endereços
+  // ============================================
+  // Busca todos os endereços do usuário autenticado
   // ============================================
   const loadAddresses = async () => {
     try {
@@ -88,7 +103,7 @@ export default function MeuPerfilPage() {
   };
 
   // ============================================
-  // ATUALIZAR CAMPO DO PERFIL
+  // FUNÇÃO: Atualizar campos do perfil
   // ============================================
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -106,7 +121,7 @@ export default function MeuPerfilPage() {
   };
 
   // ============================================
-  // ATUALIZAR CAMPO DO ENDEREÇO
+  // FUNÇÃO: Atualizar campos do endereço
   // ============================================
   const handleAddressChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value, type, checked } = e.target;
@@ -118,7 +133,7 @@ export default function MeuPerfilPage() {
   };
 
   // ============================================
-  // BUSCAR CEP
+  // FUNÇÃO: Buscar endereço pelo CEP
   // ============================================
   const handleSearchCep = async () => {
     const cleanCep = newAddress.zip_code.replace(/\D/g, "");
@@ -146,7 +161,7 @@ export default function MeuPerfilPage() {
   };
 
   // ============================================
-  // SALVAR PERFIL
+  // FUNÇÃO: Salvar perfil
   // ============================================
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -172,7 +187,7 @@ export default function MeuPerfilPage() {
   };
 
   // ============================================
-  // SALVAR NOVO ENDEREÇO
+  // FUNÇÃO: Salvar novo endereço
   // ============================================
   const handleSaveAddress = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -201,7 +216,7 @@ export default function MeuPerfilPage() {
   };
 
   // ============================================
-  // CANCELAR EDIÇÃO
+  // FUNÇÃO: Cancelar edição de perfil
   // ============================================
   const handleCancel = () => {
     if (user) {
@@ -216,7 +231,7 @@ export default function MeuPerfilPage() {
   };
 
   // ============================================
-  // DELETAR CONTA
+  // FUNÇÃO: Deletar conta do usuário
   // ============================================
   const handleDeleteAccount = async () => {
     const confirmText = "DELETAR MINHA CONTA";
@@ -238,7 +253,7 @@ export default function MeuPerfilPage() {
   };
 
   // ============================================
-  // DELETAR ENDEREÇO
+  // FUNÇÃO: Deletar endereço
   // ============================================
   const handleDeleteAddress = async (addressId: number) => {
     const confirm = window.confirm(

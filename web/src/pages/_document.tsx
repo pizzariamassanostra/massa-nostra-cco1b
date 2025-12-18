@@ -1,5 +1,5 @@
 // ============================================
-// CUSTOM DOCUMENT: NEXT.JS
+// DOCUMENTO CUSTOMIZADO: NEXT.JS
 // ============================================
 // Define a estrutura base do HTML para toda aplicação Next.js.
 // Permite configurar idioma, head global e body customizado.
@@ -11,14 +11,21 @@ export default function Document() {
   return (
     // Define idioma padrão da aplicação
     <Html lang="en">
-      {/* Head global da aplicação (meta tags, links, etc) */}
+      {/* ============================================ */}
+      {/* HEAD GLOBAL */}
+      {/* ============================================ */}
       <Head />
 
-      {/* ⚠️ Observação: <title> não deve ser usado aqui.
+      {/* ============================================ */}
+      {/* OBSERVAÇÃO IMPORTANTE */}
+      {/* ============================================ */}
+      {/* <title> não deve ser usado aqui.
           O título deve ser definido em cada página ou via <Head> do Next.js */}
       <title className="font-bold">Pizzaria Massa Nostra</title>
 
-      {/* Body da aplicação com classes globais */}
+      {/* ============================================ */}
+      {/* BODY GLOBAL */}
+      {/* ============================================ */}
       <body className="dark overflow-x-clip">
         {/* Renderiza o conteúdo principal da página */}
         <Main />

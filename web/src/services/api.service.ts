@@ -2,12 +2,17 @@
 // SERVIÇO: CONFIGURAÇÃO BASE DA API
 // ============================================
 // Configuração do Axios com interceptors
-// Base URL, timeout, headers, autenticação JWT
+// Define Base URL, timeout, headers e autenticação JWT
 // ============================================
 
 import axios, { AxiosError, AxiosResponse } from "axios";
 import { toast } from "react-hot-toast";
 
+// ============================================
+// INSTÂNCIA AXIOS
+// ============================================
+// Cria instância global do Axios com configurações padrão
+// ============================================
 const api = axios.create({
   baseURL:
     process.env.NEXT_PUBLIC_API_URL ||
@@ -19,7 +24,11 @@ const api = axios.create({
   },
 });
 
+// ============================================
 // INTERCEPTOR DE REQUEST
+// ============================================
+// Adiciona token JWT no header Authorization
+// ============================================
 api.interceptors.request.use(
   (config) => {
     if (globalThis !== undefined) {
@@ -35,7 +44,15 @@ api.interceptors.request.use(
   }
 );
 
+// ============================================
 // INTERCEPTOR DE RESPONSE
+// ============================================
+// Trata erros globais de resposta da API
+// - 401: Remove token e redireciona para login
+// - 403: Sem permissão
+// - 404: Recurso não encontrado
+// - 500: Erro interno do servidor
+// ============================================
 api.interceptors.response.use(
   (response: AxiosResponse) => {
     return response;
@@ -65,4 +82,7 @@ api.interceptors.response.use(
   }
 );
 
+// ============================================
+// EXPORTAR INSTÂNCIA
+// ============================================
 export default api;

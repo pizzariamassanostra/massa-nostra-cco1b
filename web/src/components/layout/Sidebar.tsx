@@ -1,5 +1,11 @@
+// ============================================
+// COMPONENTE: SIDEBAR
+// ============================================
 // Sidebar não é necessária no layout atual
-// Usando apenas Header e Footer
+// Layout utiliza apenas Header e Footer
+// Mantido como componente vazio por compatibilidade
+// ============================================
+
 export default function Sidebar() {
-  return null;
+  return null; // Sidebar desativada intencionalmente
 }

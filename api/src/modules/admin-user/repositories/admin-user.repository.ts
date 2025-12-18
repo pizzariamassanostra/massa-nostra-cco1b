@@ -31,8 +31,8 @@ export class AdminUserRepository {
     }
 
     // Incluir hash de senha (usado apenas no login)
-    if (options.with_password_hash) {
-      qb.addSelect('admin_users.password_hash');
+    if (options.with_password) {
+      qb.addSelect('admin_users.password');
     }
 
     // Condições WHERE

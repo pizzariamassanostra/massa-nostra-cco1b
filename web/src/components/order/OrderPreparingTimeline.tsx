@@ -1,20 +1,15 @@
-/**
- * ============================================
- * COMPONENTE: OrderPreparingTimeline
- * ============================================
- * Timeline visual mostrando progresso do pedido
- * Estilo iFood com animações
- *
- * Remover "as const" de ternários (causa erro TypeScript)
- *
- * Estados:
- * - confirmed: Pedido recebido
- * - preparing: Em preparação
- * - ready: Pronto para saída
- * - delivering: Saiu para entrega
- * - delivered: Entregue
- * ============================================
- */
+// ============================================
+// COMPONENTE: ORDER PREPARING TIMELINE
+// ============================================
+// Exibe a linha do tempo do preparo do pedido.
+// Mostra etapas, status visual e tempo estimado.
+// Estados possíveis:
+// - confirmed   → Pedido recebido
+// - preparing   → Em preparação
+// - ready       → Pronto para saída
+// - delivering  → Saiu para entrega
+// - delivered   → Entregue
+// ============================================
 
 import React, { useEffect, useState } from "react";
 import {
@@ -26,32 +21,30 @@ import {
   AlertCircle,
 } from "lucide-react";
 
-/**
- * Props do componente
- */
+// ============================================
+// INTERFACE DE PROPS
+// ============================================
 interface OrderPreparingTimelineProps {
   orderStatus: string | null; // Status atual do pedido
   estimatedTime?: number; // Tempo estimado em minutos
   orderNumber?: number; // Número do pedido
-  isLoading?: boolean; // Está carregando?
+  isLoading?: boolean; // Indica estado de carregamento
 }
 
-/**
- * Tipo para cada etapa da timeline
- */
+// ============================================
+// INTERFACE DE ETAPA DA TIMELINE
+// ============================================
 interface TimelineStep {
-  id: string;
-  label: string;
-  description: string;
-  icon: React.ReactNode;
-  status: "completed" | "active" | "pending";
+  id: string; // Identificador da etapa
+  label: string; // Título da etapa
+  description: string; // Descrição da etapa
+  icon: React.ReactNode; // Ícone representativo
+  status: "completed" | "active" | "pending"; // Status visual da etapa
 }
 
-/**
- * ============================================
- * COMPONENTE: OrderPreparingTimeline
- * ============================================
- */
+// ============================================
+// COMPONENTE
+// ============================================
 export const OrderPreparingTimeline: React.FC<OrderPreparingTimelineProps> = ({
   orderStatus = "confirmed",
   estimatedTime = 30,
@@ -61,15 +54,13 @@ export const OrderPreparingTimeline: React.FC<OrderPreparingTimelineProps> = ({
   // ============================================
   // ESTADO LOCAL
   // ============================================
+  // Controla o tempo restante estimado do pedido
   const [timeRemaining, setTimeRemaining] = useState(estimatedTime);
 
   // ============================================
-  // FUNÇÃO: Determinar status da etapa
+  // FUNÇÃO: DETERMINAR STATUS DA ETAPA
   // ============================================
-  /**
-   * Helper para determinar status da etapa
-   * Evita erro TypeScript com "as const" em ternários
-   */
+  // Retorna o status da etapa baseado em uma condição
   const getStepStatus = (
     condition: boolean,
     statusIfTrue: "completed" | "active" | "pending",
@@ -79,15 +70,10 @@ export const OrderPreparingTimeline: React.FC<OrderPreparingTimelineProps> = ({
   };
 
   // ============================================
-  // FUNÇÃO: Mapear status para etapas
+  // FUNÇÃO: MAPEAR STATUS DO PEDIDO PARA ETAPAS
   // ============================================
-  /**
-   * Converte status do pedido em array de etapas com estados
-   * Exemplos:
-   * - confirmed → etapa 1 concluída, etapa 2 ativa
-   * - preparing → etapa 2 ativa, etapa 3 pendente
-   * - delivering → etapa 3 concluída, etapa 4 ativa
-   */
+  // Converte o status do pedido em uma lista de etapas
+  // com seus respectivos estados visuais
   const getTimelineSteps = (): TimelineStep[] => {
     const baseSteps: TimelineStep[] = [
       {
@@ -95,7 +81,7 @@ export const OrderPreparingTimeline: React.FC<OrderPreparingTimelineProps> = ({
         label: "Pedido Recebido",
         description: "Seu pedido foi confirmado",
         icon: <CheckCircle className="w-6 h-6" />,
-        status: "completed",
+        status: "completed", // Sempre concluído após criação do pedido
       },
       {
         id: "preparing",
@@ -148,100 +134,106 @@ export const OrderPreparingTimeline: React.FC<OrderPreparingTimelineProps> = ({
   };
 
   // ============================================
-  // EFEITO: Countdown de tempo estimado
+  // EFEITO: CONTAGEM REGRESSIVA DO TEMPO ESTIMADO
   // ============================================
   useEffect(() => {
+    // Não executa se pedido já foi entregue
     if (orderStatus === "delivered" || !estimatedTime) return;
 
     const interval = setInterval(() => {
-      setTimeRemaining((prev) => (prev > 0 ? prev - 1 : 0));
-    }, 60000); // Atualizar a cada 1 minuto
+      setTimeRemaining((prev) => (prev > 0 ? prev - 1 : 0)); // Evita valores negativos
+    }, 60000); // Atualiza a cada 1 minuto
 
-    return () => clearInterval(interval);
+    return () => clearInterval(interval); // Limpa intervalo ao desmontar
   }, [orderStatus, estimatedTime]);
 
   // ============================================
-  // RENDERIZAÇÃO
+  // DADOS DE RENDERIZAÇÃO
   // ============================================
   const steps = getTimelineSteps();
-
   return (
     <div className="w-full bg-white rounded-lg p-6 shadow-lg border border-gray-200">
-      {/* CABEÇALHO */}
+      {/* CABEÇALHO DO COMPONENTE */}
       <div className="mb-6">
         <h3 className="text-xl font-bold text-gray-800">
           {orderStatus === "delivered"
-            ? "✓ Pedido Entregue"
-            : "Acompanhando seu pedido"}
+            ? "✓ Pedido Entregue" // Título exibido quando pedido foi entregue
+            : "Acompanhando seu pedido"}{" "}
+          // Título padrão durante o progresso
         </h3>
+
+        {/* Número do pedido (opcional) */}
         {orderNumber && (
           <p className="text-sm text-gray-600 mt-1">Pedido #{orderNumber}</p>
         )}
       </div>
-
-      {/* TIMELINE */}
+      {/* TIMELINE DO PEDIDO */}
       <div className="space-y-4">
         {steps.map((step, index) => (
           <div key={step.id} className="flex gap-4">
-            {/* ÍCONE + LINHA */}
+            {/* ÍCONE E LINHA
+            CONECTORA */}
             <div className="flex flex-col items-center">
-              {/* ÍCONE */}
+              {/* ÍCONE DA ETAPA */}
               <div
                 className={`
                   w-10 h-10 rounded-full flex items-center justify-center
                   transition-all duration-300
                   ${
                     step.status === "completed"
-                      ? "bg-green-100 text-green-600"
+                      ? "bg-green-100 text-green-600" // Etapa concluída
                       : step.status === "active"
-                      ? "bg-red-100 text-red-600 animate-pulse"
-                      : "bg-gray-100 text-gray-400"
+                      ? "bg-red-100 text-red-600 animate-pulse" // Etapa atual
+                      : "bg-gray-100 text-gray-400" // Etapa pendente
                   }
                 `}
               >
                 {step.icon}
               </div>
 
-              {/* LINHA CONECTORA */}
+              {/* Linha conectora entre etapas */}
               {index < steps.length - 1 && (
                 <div
                   className={`
                     w-1 h-12 mt-2
                     ${
                       step.status === "completed"
-                        ? "bg-green-300"
-                        : "bg-gray-200"
+                        ? "bg-green-300" // Linha concluída
+                        : "bg-gray-200" // Linha pendente
                     }
                   `}
                 />
               )}
             </div>
-
-            {/* CONTEÚDO */}
+            {/* CONTEÚDO DA ETAPA */}
             <div className="flex-1 pt-1">
               <div className="flex items-center justify-between mb-1">
+                {/* Título da etapa */}
                 <h4
                   className={`
                     font-semibold
                     ${
                       step.status === "completed"
-                        ? "text-green-600"
+                        ? "text-green-600" // Texto concluído
                         : step.status === "active"
-                        ? "text-red-600"
-                        : "text-gray-400"
+                        ? "text-red-600" // Texto ativo
+                        : "text-gray-400" // Texto pendente
                     }
                   `}
                 >
                   {step.label}
                 </h4>
+
+                {/* Indicador visual de etapa ativa */}
                 {step.status === "active" && (
                   <Clock className="w-4 h-4 text-red-600 animate-spin" />
                 )}
               </div>
 
+              {/* Descrição da etapa */}
               <p className="text-sm text-gray-600">{step.description}</p>
 
-              {/* TEMPO ESTIMADO */}
+              {/* Tempo estimado da etapa ativa */}
               {step.status === "active" && estimatedTime && (
                 <p className="text-xs text-red-600 font-semibold mt-2">
                   ⏱️ Tempo estimado: {timeRemaining} min
@@ -251,9 +243,9 @@ export const OrderPreparingTimeline: React.FC<OrderPreparingTimelineProps> = ({
           </div>
         ))}
       </div>
-
-      {/* RODAPÉ COM INFORMAÇÕES */}
+      {/* RODAPÉ COM MENSAGENS CONTEXTUAIS */}
       <div className="mt-6 pt-4 border-t border-gray-200">
+        {/* Pedido em preparação */}
         {orderStatus === "preparing" && (
           <div className="bg-blue-50 rounded-lg p-3 flex gap-3">
             <TrendingUp className="w-5 h-5 text-blue-600 flex-shrink-0" />
@@ -263,6 +255,7 @@ export const OrderPreparingTimeline: React.FC<OrderPreparingTimelineProps> = ({
           </div>
         )}
 
+        {/* Pedido saiu para entrega */}
         {orderStatus === "delivering" && (
           <div className="bg-purple-50 rounded-lg p-3 flex gap-3">
             <Truck className="w-5 h-5 text-purple-600 flex-shrink-0" />
@@ -275,6 +268,7 @@ export const OrderPreparingTimeline: React.FC<OrderPreparingTimelineProps> = ({
           </div>
         )}
 
+        {/* Pedido entregue */}
         {orderStatus === "delivered" && (
           <div className="bg-green-50 rounded-lg p-3 flex gap-3">
             <CheckCircle className="w-5 h-5 text-green-600 flex-shrink-0" />
@@ -287,6 +281,7 @@ export const OrderPreparingTimeline: React.FC<OrderPreparingTimelineProps> = ({
           </div>
         )}
 
+        {/* Estado de carregamento */}
         {!orderStatus && (
           <div className="bg-yellow-50 rounded-lg p-3 flex gap-3">
             <AlertCircle className="w-5 h-5 text-yellow-600 flex-shrink-0" />

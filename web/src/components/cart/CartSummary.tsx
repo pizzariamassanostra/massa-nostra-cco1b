@@ -1,18 +1,24 @@
 // ============================================
 // COMPONENTE: RESUMO DO CARRINHO
 // ============================================
-// Exibe subtotal, taxa de entrega e total
-// Formatação de valores em Real (R$)
+// Exibe os valores do pedido
+// Subtotal, taxa de entrega e total final
 // ============================================
 
 import React from "react";
 import { useCart } from "@/contexts/CartContext";
 
+// ============================================
+// COMPONENTE: CartSummary
+// ============================================
 const CartSummary: React.FC = () => {
+  // ============================================
+  // CONTEXTO DO CARRINHO
+  // ============================================
   const { subtotal, deliveryFee, total } = useCart();
 
   // ============================================
-  // FORMATAR PREÇO EM REAL
+  // FUNÇÃO: Formatar preço em Real (BRL)
   // ============================================
   const formatPrice = (price: number) => {
     return new Intl.NumberFormat("pt-BR", {
@@ -21,6 +27,9 @@ const CartSummary: React.FC = () => {
     }).format(price);
   };
 
+  // ============================================
+  // RENDERIZAÇÃO
+  // ============================================
   return (
     <div className="space-y-2">
       {/* ============================================ */}

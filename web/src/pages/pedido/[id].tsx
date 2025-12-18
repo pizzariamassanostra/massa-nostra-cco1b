@@ -1,5 +1,5 @@
 // ============================================
-// PÁGINA: ORDER SUCCESS
+// PÁGINA: PEDIDO REALIZADO
 // ============================================
 // Página exibida após o cliente finalizar o pedido.
 // Mostra informações do pedido e status de confirmação.
@@ -18,11 +18,16 @@ export default function OrderSuccessPage() {
   const [order, setOrder] = useState<any>(null);
   const [loading, setLoading] = useState(true);
 
+  // ============================================
+  // FUNÇÃO: CARREGAR PEDIDO
+  // ============================================
+  // Busca os dados do pedido na API pelo ID
+  // ============================================
   const loadOrder = useCallback(async () => {
     try {
       setLoading(true);
       const response = await orderService.getById(Number(id));
-      setOrder(response.order);
+      setOrder(response);
     } catch (error) {
       console.error("Erro ao carregar pedido:", error);
       toast.error("Erro ao carregar pedido");
@@ -31,12 +36,22 @@ export default function OrderSuccessPage() {
     }
   }, [id]);
 
+  // ============================================
+  // EFEITOS: EXECUTAR CARREGAMENTO AO MONTAR
+  // ============================================
+  // Dispara a função de carregamento quando o ID estiver disponível
+  // ============================================
   useEffect(() => {
     if (id) {
       loadOrder();
     }
   }, [id, loadOrder]);
 
+  // ============================================
+  // FUNÇÃO: FORMATAR PREÇO
+  // ============================================
+  // Converte valores em centavos para moeda BRL
+  // ============================================
   const formatPrice = (price: number) => {
     return new Intl.NumberFormat("pt-BR", {
       style: "currency",
@@ -44,6 +59,9 @@ export default function OrderSuccessPage() {
     }).format(price / 100);
   };
 
+  // ============================================
+  // ESTADO: CARREGANDO PEDIDO
+  // ============================================
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -52,6 +70,9 @@ export default function OrderSuccessPage() {
     );
   }
 
+  // ============================================
+  // ESTADO: PEDIDO NÃO ENCONTRADO
+  // ============================================
   if (!order) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -60,14 +81,23 @@ export default function OrderSuccessPage() {
     );
   }
 
+  // ============================================
+  // RENDERIZAÇÃO PRINCIPAL
+  // ============================================
   return (
     <>
+      {/* ============================================ */}
+      {/* HEAD DA PÁGINA */}
+      {/* ============================================ */}
       <Head>
         <title>Pedido Realizado - Pizzaria Massa Nostra</title>
       </Head>
 
       <div className="container mx-auto px-4 py-8 max-w-3xl">
         <div className="bg-white rounded-lg shadow-lg p-8">
+          {/* ============================================ */}
+          {/* HEADER DE CONFIRMAÇÃO */}
+          {/* ============================================ */}
           <div className="text-center mb-8">
             <CheckCircle className="w-20 h-20 text-green-600 mx-auto mb-4" />
             <h1 className="text-3xl font-bold text-gray-800 mb-2">
@@ -81,6 +111,9 @@ export default function OrderSuccessPage() {
             </p>
           </div>
 
+          {/* ============================================ */}
+          {/* STATUS DO PEDIDO */}
+          {/* ============================================ */}
           <div className="border-t pt-6 mb-6">
             <h2 className="text-xl font-bold mb-4 flex items-center gap-2">
               <Clock className="w-6 h-6 text-red-600" />
@@ -96,6 +129,9 @@ export default function OrderSuccessPage() {
             </div>
           </div>
 
+          {/* ============================================ */}
+          {/* ENDEREÇO DE ENTREGA */}
+          {/* ============================================ */}
           {order.address && (
             <div className="border-t pt-6 mb-6">
               <h2 className="text-xl font-bold mb-4 flex items-center gap-2">
@@ -118,6 +154,9 @@ export default function OrderSuccessPage() {
             </div>
           )}
 
+          {/* ============================================ */}
+          {/* ITENS DO PEDIDO */}
+          {/* ============================================ */}
           <div className="border-t pt-6 mb-6">
             <h2 className="text-xl font-bold mb-4">Itens do Pedido</h2>
             <div className="space-y-3">
@@ -144,6 +183,9 @@ export default function OrderSuccessPage() {
             </div>
           </div>
 
+          {/* ============================================ */}
+          {/* RESUMO DE VALORES */}
+          {/* ============================================ */}
           <div className="border-t pt-6">
             <div className="flex justify-between mb-2">
               <span className="text-gray-600">Subtotal</span>
@@ -165,6 +207,9 @@ export default function OrderSuccessPage() {
             </div>
           </div>
 
+          {/* ============================================ */}
+          {/* AÇÕES FINAIS */}
+          {/* ============================================ */}
           <div className="mt-8 flex gap-4">
             <button
               onClick={() => router.push("/meus-pedidos")}

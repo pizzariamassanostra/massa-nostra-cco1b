@@ -1,106 +1,148 @@
 // ============================================
-// SERVICE: PEDIDOS
+// SERVIÇO: PEDIDOS
 // ============================================
-// Serviço de criação, listagem e gerenciamento de pedidos
+// Responsável por gerenciar pedidos da aplicação
+// Inclui criação, consulta, cancelamento e validação
 // ============================================
 
 import api from "./api.service";
 
 // ============================================
-// INTERFACES
+// INTERFACES DE TIPOS
+// Estruturas de dados utilizadas para pedidos
 // ============================================
 
-interface OrderItem {
-  product_id: number;
-  variant_id: number;
-  crust_id?: number;
-  filling_id?: number;
+// Estrutura de endereço de entrega
+export interface Address {
+  street: string;
+  number: string;
+  complement?: string;
+  neighborhood: string;
+  city: string;
+  state: string;
+  zip_code: string;
+  reference?: string;
+}
+
+// Estrutura de usuário associado ao pedido
+export interface User {
+  name: string;
+  email: string;
+  phone?: string;
+}
+
+// Estrutura de item do pedido
+export interface OrderItem {
+  id?: number;
+  product?: {
+    id?: number;
+    name: string;
+  };
+  product_name?: string;
+  variant?: {
+    label: string;
+  };
+  variant_label?: string;
   quantity: number;
-  notes?: string;
+  subtotal: string | number;
+  unit_price?: number;
+  total_price?: number;
+  crust?: {
+    name: string;
+  };
+  crust_name?: string;
+  filling?: {
+    name: string;
+  };
+  filling_name?: string;
 }
 
-interface CreateOrderDto {
-  address_id: number;
-  items: OrderItem[];
-  payment_method: "pix" | "dinheiro" | "cartao_debito" | "cartao_credito";
-  notes?: string;
-}
-
-interface Order {
+// Estrutura completa de pedido
+export interface Order {
   id: number;
-  common_user_id: number;
-  address_id: number;
+  order_number?: string;
+  user?: User;
   status: string;
-  subtotal: string;
-  delivery_fee: string;
-  discount: string;
-  total: string;
   payment_method: string;
-  payment_reference: string | null;
-  delivery_token: string;
-  notes: string | null;
-  estimated_time: number;
+  total: number | string;
+  subtotal?: number | string;
+  delivery_fee?: number | string;
+  discount?: number | string;
   created_at: string;
-  updated_at: string;
-  user?: any;
-  address?: any;
-  items?: any[];
+  delivery_address?: Address; // Renomeado de 'address'
+  address?: Address; // Mantido para compatibilidade
+  delivery_token?: string;
+  items?: OrderItem[];
+  estimated_time?: number;
 }
 
+// Estrutura para criação de pedido
+export interface CreateOrderDto {
+  address_id: number;
+  items: {
+    product_id: number;
+    variant_id: number;
+    crust_id?: number;
+    filling_id?: number;
+    quantity: number;
+  }[];
+  payment_method: "pix" | "dinheiro" | "cartao_debito" | "cartao_credito";
+}
+
+// ============================================================================
+// CLASSE DE SERVIÇO
+// Responsável por fazer todas as requisições relacionadas a pedidos
+// ============================================================================
 class OrderService {
-  // ============================================
-  // CRIAR PEDIDO
-  // ============================================
-  // Cria um novo pedido com os itens do carrinho
-  // Requer autenticação (pega customer_id do JWT)
-  async create(
-    data: CreateOrderDto
-  ): Promise<{ ok: boolean; message: string; order: Order }> {
+  // Criar novo pedido
+  async create(data: CreateOrderDto) {
     const response = await api.post("/order", data);
     return response.data;
   }
 
-  // ============================================
-  // LISTAR MEUS PEDIDOS
-  // ============================================
-  // Retorna todos os pedidos do usuário logado
-  async getMyOrders(): Promise<{ ok: boolean; orders: Order[] }> {
+  // Buscar pedido específico pelo ID
+  async getById(id: number): Promise<Order> {
+    const response = await api.get(`/order/${id}`);
+    return response.data.order || response.data;
+  }
+
+  // Buscar pedidos do usuário logado
+  async getMyOrders() {
     const response = await api.get("/order/my-orders");
     return response.data;
   }
 
-  // ============================================
-  // BUSCAR PEDIDO POR ID
-  // ============================================
-  // Retorna detalhes completos de um pedido específico
-  async getById(id: number): Promise<{ ok: boolean; order: Order }> {
-    const response = await api.get(`/order/${id}`);
-    return response.data;
+  // Buscar todos os pedidos (ADMIN)
+  async getAll(params?: {
+    status?: string;
+    search?: string;
+    startDate?: string;
+    endDate?: string;
+    paymentMethod?: string;
+    page?: number;
+    limit?: number;
+  }): Promise<{ orders: Order[]; total: number }> {
+    const response = await api.get("/order", { params });
+    return {
+      orders: response.data.orders || response.data,
+      total: response.data.total || response.data.length || 0,
+    };
   }
 
-  // ============================================
-  // CANCELAR PEDIDO
-  // ============================================
-  // Cancela um pedido (apenas se status = pendente ou confirmado)
-  async cancel(id: number): Promise<{ ok: boolean; message: string }> {
+  // Cancelar pedido
+  async cancel(id: number) {
     const response = await api.post(`/order/${id}/cancel`);
     return response.data;
   }
 
-  // ============================================
-  // VALIDAR TOKEN DE ENTREGA
-  // ============================================
-  // Valida o token de 6 dígitos na entrega
-  async validateToken(
-    orderId: number,
-    token: string
-  ): Promise<{ ok: boolean; message: string }> {
-    const response = await api.post(`/order/${orderId}/validate-token`, {
-      token,
-    });
+  // Validar token de entrega
+  async validateToken(id: number, token: string) {
+    const response = await api.post(`/order/${id}/validate-token`, { token });
     return response.data;
   }
 }
 
+// ============================================
+// EXPORTAR INSTÂNCIA ÚNICA
+// ============================================
 export const orderService = new OrderService();
-export type { CreateOrderDto, Order, OrderItem };

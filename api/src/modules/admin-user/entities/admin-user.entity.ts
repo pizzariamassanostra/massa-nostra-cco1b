@@ -30,7 +30,7 @@ export class AdminUser {
 
   // Hash da senha (não retornado em consultas)
   @Column({ select: false, name: 'password' })
-  password_hash: string;
+  password: string;
 
   // Data de criação do registro
   @CreateDateColumn({ type: 'timestamptz', select: false })

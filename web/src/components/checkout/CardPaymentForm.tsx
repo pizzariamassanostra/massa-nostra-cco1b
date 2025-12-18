@@ -1,39 +1,53 @@
 // ============================================
 // COMPONENTE: CARD PAYMENT FORM
 // ============================================
-// Formulário de pagamento com cartão.
-// Inclui campos para número do cartão, nome, validade e CVV.
-// - Formata número do cartão em blocos de 4 dígitos.
-// - Formata validade no padrão MM/AA.
-// - Exibe ícones de segurança e cartão.
+// Formulário de pagamento via cartão de crédito
+// Responsável por coletar e formatar dados do cartão
 // ============================================
 
 import React, { useState } from "react";
 import { CreditCard, Lock } from "lucide-react";
 
+// ============================================
+// INTERFACE DE PROPS
+// ============================================
+// Define os dados esperados pelo componente
+// ============================================
 interface CardPaymentFormProps {
   onSubmit: (cardData: any) => void; // Callback para envio dos dados do cartão
 }
 
+// ============================================
+// COMPONENTE: CardPaymentForm
+// ============================================
 export const CardPaymentForm: React.FC<CardPaymentFormProps> = ({
   onSubmit,
 }) => {
-  // Estados dos campos do formulário
-  const [cardNumber, setCardNumber] = useState("");
-  const [cardName, setCardName] = useState("");
-  const [expiry, setExpiry] = useState("");
-  const [cvv, setCvv] = useState("");
+  // ============================================
+  // ESTADOS DO FORMULÁRIO
+  // ============================================
+  const [cardNumber, setCardNumber] = useState(""); // Número do cartão
+  const [cardName, setCardName] = useState(""); // Nome impresso no cartão
+  const [expiry, setExpiry] = useState(""); // Data de validade (MM/AA)
+  const [cvv, setCvv] = useState(""); // Código de segurança
 
-  // Formata número do cartão (agrupado em blocos de 4 dígitos)
+  // ============================================
+  // FUNÇÃO: Formatar número do cartão
+  // ============================================
+  // Agrupa em blocos de 4 dígitos
+  // Limita a 16 dígitos (19 caracteres com espaços)
   const formatCardNumber = (value: string) => {
     const cleaned = value.replace(/\D/g, ""); // Remove caracteres não numéricos
     const chunks = cleaned.match(/.{1,4}/g); // Agrupa em blocos de 4
     return chunks
-      ? chunks.join(" ").substring(0, 19) // Limita a 19 caracteres (16 dígitos + 3 espaços)
+      ? chunks.join(" ").substring(0, 19) // Limita tamanho total
       : cleaned.substring(0, 16);
   };
 
-  // Formata data de validade (MM/AA)
+  // ============================================
+  // FUNÇÃO: Formatar data de validade
+  // ============================================
+  // Formato MM/AA
   const formatExpiry = (value: string) => {
     return value
       .replace(/\D/g, "") // Remove caracteres não numéricos
@@ -41,15 +55,22 @@ export const CardPaymentForm: React.FC<CardPaymentFormProps> = ({
       .substring(0, 5); // Limita a 5 caracteres
   };
 
+  // ============================================
+  // RENDERIZAÇÃO
+  // ============================================
   return (
     <div className="mt-4 p-4 bg-gray-50 rounded-lg space-y-4">
-      {/* SEGURANÇA */}
+      {/* ============================================ */}
+      {/* INFORMAÇÃO DE SEGURANÇA */}
+      {/* ============================================ */}
       <div className="flex items-center gap-2 text-sm text-gray-600 mb-4">
         <Lock className="w-4 h-4" />
         <span>Seus dados estão seguros</span>
       </div>
 
-      {/* NÚMERO DO CARTÃO */}
+      {/* ============================================ */}
+      {/* CAMPO: NÚMERO DO CARTÃO */}
+      {/* ============================================ */}
       <div>
         <label className="block text-sm font-medium text-gray-700 mb-1">
           Número do Cartão
@@ -64,12 +85,15 @@ export const CardPaymentForm: React.FC<CardPaymentFormProps> = ({
             maxLength={19}
             inputMode="numeric"
           />
-          {/* Ícone de cartão */}
+
+          {/* ÍCONE DO CARTÃO */}
           <CreditCard className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
         </div>
       </div>
 
-      {/* NOME NO CARTÃO */}
+      {/* ============================================ */}
+      {/* CAMPO: NOME NO CARTÃO */}
+      {/* ============================================ */}
       <div>
         <label className="block text-sm font-medium text-gray-700 mb-1">
           Nome no Cartão
@@ -83,9 +107,13 @@ export const CardPaymentForm: React.FC<CardPaymentFormProps> = ({
         />
       </div>
 
-      {/* VALIDADE E CVV */}
+      {/* ============================================ */}
+      {/* CAMPOS: VALIDADE E CVV */}
+      {/* ============================================ */}
       <div className="grid grid-cols-2 gap-4">
-        {/* Validade */}
+        {/* ============================================ */}
+        {/* CAMPO: VALIDADE */}
+        {/* ============================================ */}
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">
             Validade
@@ -101,7 +129,9 @@ export const CardPaymentForm: React.FC<CardPaymentFormProps> = ({
           />
         </div>
 
-        {/* CVV */}
+        {/* ============================================ */}
+        {/* CAMPO: CVV */}
+        {/* ============================================ */}
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">
             CVV

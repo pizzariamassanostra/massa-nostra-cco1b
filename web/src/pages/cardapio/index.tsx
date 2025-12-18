@@ -17,20 +17,25 @@ import CategoryFilter from "@/components/product/CategoryFilter";
 import Head from "next/head";
 import { Search, Loader } from "lucide-react";
 
+// ============================================================================
+// COMPONENTE DE PÁGINA
+// Responsável por exibir o cardápio e permitir filtros e busca de produtos
+// ============================================================================
 export default function CardapioPage() {
   // ============================================
   // ESTADOS
   // ============================================
-  const [products, setProducts] = useState<Product[]>([]);
-  const [categories, setCategories] = useState<ProductCategory[]>([]);
-  const [selectedCategory, setSelectedCategory] = useState<number | null>(null);
-  const [searchTerm, setSearchTerm] = useState("");
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const [products, setProducts] = useState<Product[]>([]); // Lista de produtos
+  const [categories, setCategories] = useState<ProductCategory[]>([]); // Categorias disponíveis
+  const [selectedCategory, setSelectedCategory] = useState<number | null>(null); // Categoria selecionada
+  const [searchTerm, setSearchTerm] = useState(""); // Termo de busca
+  const [loading, setLoading] = useState(true); // Estado de carregamento
+  const [error, setError] = useState<string | null>(null); // Mensagem de erro
 
   // ============================================
   // CARREGAR DADOS AO MONTAR
   // ============================================
+  // Executa o carregamento inicial do cardápio
   useEffect(() => {
     loadData();
   }, []);
@@ -38,6 +43,7 @@ export default function CardapioPage() {
   // ============================================
   // CARREGAR PRODUTOS E CATEGORIAS
   // ============================================
+  // Busca produtos e categorias simultaneamente
   const loadData = async () => {
     try {
       setLoading(true);
@@ -66,7 +72,8 @@ export default function CardapioPage() {
   // ============================================
   // FILTRAR PRODUTOS
   // ============================================
-  // Filtra por categoria E por termo de busca simultaneamente
+  // Filtra os produtos por categoria selecionada
+  // e pelo termo de busca informado
   const filteredProducts = (products || []).filter((product) => {
     // Verifica se o produto pertence à categoria selecionada
     const matchesCategory =
@@ -78,12 +85,15 @@ export default function CardapioPage() {
       product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       product.description.toLowerCase().includes(searchTerm.toLowerCase());
 
-    // Retorna true apenas se passar nos dois filtros
+    // Retorna true apenas se atender aos dois critérios
     return matchesCategory && matchesSearch;
   });
 
   return (
     <>
+      {/* ============================================ */}
+      {/* HEAD DA PÁGINA */}
+      {/* ============================================ */}
       <Head>
         <title>Cardápio - Pizzaria Massa Nostra</title>
         <meta
@@ -92,6 +102,9 @@ export default function CardapioPage() {
         />
       </Head>
 
+      {/* ============================================ */}
+      {/* CONTAINER PRINCIPAL */}
+      {/* ============================================ */}
       <div className="container mx-auto px-4 py-8">
         {/* ============================================ */}
         {/* HEADER DA PÁGINA */}
@@ -202,7 +215,7 @@ export default function CardapioPage() {
           filteredProducts.length === 0 &&
           products.length > 0 && (
             <div className="text-center py-20">
-              <div className="text-6xl mb-4">🔍</div>
+              <div className="text-6xl mb-4"></div>
               <h3 className="text-2xl font-bold text-gray-800 mb-2">
                 Nenhum produto encontrado
               </h3>

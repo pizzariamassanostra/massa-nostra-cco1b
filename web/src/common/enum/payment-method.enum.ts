@@ -1,13 +1,10 @@
 // ============================================
 // ENUM: MÉTODOS DE PAGAMENTO
 // ============================================
-// Define todas as formas de pagamento aceitas
-// Sincronizado com a API NestJS
-// ============================================
 
 export enum PaymentMethod {
-  PIX = "pix",
-  DINHEIRO = "dinheiro",
-  CARTAO_DEBITO = "cartao_debito",
-  CARTAO_CREDITO = "cartao_credito",
+  PIX = "pix", // Pagamento via PIX
+  DINHEIRO = "dinheiro", // Pagamento em dinheiro
+  CARTAO_DEBITO = "cartao_debito", // Pagamento com cartão de débito
+  CARTAO_CREDITO = "cartao_credito", // Pagamento com cartão de crédito
 }

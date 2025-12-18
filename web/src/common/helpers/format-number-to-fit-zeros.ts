@@ -1,18 +1,21 @@
 // ============================================
-// FUNÇÃO: FORMAT NUMBER TO FIT ZEROS
-// ============================================
-// Adiciona zeros à esquerda em uma lista de números (strings),
-// garantindo que todos tenham o mesmo comprimento desejado.
+// FUNÇÃO UTILITÁRIA: FORMATAR NÚMEROS COM ZEROS À ESQUERDA
 // ============================================
 
+// ============================================
+// FUNÇÃO: formatNumberToFitZeros
+// ============================================
+// Preenche números com zeros à esquerda até atingir o tamanho desejado
+// ============================================
 export const formatNumberToFitZeros = (
   numbers: string[], // Lista de números em formato string
-  desiredLength: number // Comprimento desejado
+  desiredLength: number // Comprimento final desejado para cada número
 ) => {
   const formattedNumbers = numbers.map((number) => {
-    // Usa padStart para preencher com zeros à esquerda
+    // Preenche com zeros à esquerda até atingir o tamanho desejado
     return number.padStart(desiredLength, "0");
   });
 
+  // Retorna a lista de números já formatados
   return formattedNumbers;
 };
