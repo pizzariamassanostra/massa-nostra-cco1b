@@ -23,9 +23,10 @@ import {
 import { CustomerAddressService } from '../services/customer-address.service';
 import { CreateCustomerAddressDto } from '../dtos/create-customer-address.dto';
 import { JwtAuthGuard } from '@/common/guards/jwt-auth.guard'; // ADICIONADO
+import { JwtCustomerAuthGuard } from '../../../common/guards/jwt-customer-auth.guard';
 
 @Controller('order/address') // ROTA CORRIGIDA (antes era customer/: id/address)
-@UseGuards(JwtAuthGuard) // PROTEGE TODAS AS ROTAS COM JWT
+@UseGuards(JwtCustomerAuthGuard) // PROTEGE TODAS AS ROTAS COM JWT
 export class CustomerAddressController {
   constructor(private readonly service: CustomerAddressService) {}
 
