@@ -1,3 +1,11 @@
+// ============================================
+// CONTROLLER:  CUSTOMER ADDRESS
+// ============================================
+// - Rota alterada para /order/address
+// - Adicionado JwtCustomerAuthGuard
+// - Pega user_id do token JWT automaticamente
+// ============================================
+
 import {
   Body,
   Controller,
@@ -24,7 +32,7 @@ export class CustomerAddressController {
   @Post()
   @HttpCode(HttpStatus.CREATED)
   async create(@Request() req, @Body() dto: CreateCustomerAddressDto) {
-    const userId = req.user?. id || req.user?.sub;
+    const userId = req.user?.id || req.user?.sub;
     if (!userId) throw new Error('Usuário não autenticado');
     return this.service.createAddress(userId, dto);
   }
@@ -36,21 +44,31 @@ export class CustomerAddressController {
   }
 
   @Get(':addressId')
-  async findOne(@Request() req, @Param('addressId', ParseIntPipe) addressId: number) {
+  async findOne(
+    @Request() req,
+    @Param('addressId', ParseIntPipe) addressId: number,
+  ) {
     const userId = req.user?.id || req.user?.sub;
     return this.service.findOneAddress(userId, addressId);
   }
 
   @Put(':addressId')
-  async update(@Request() req, @Param('addressId', ParseIntPipe) addressId: number, @Body() dto: CreateCustomerAddressDto) {
+  async update(
+    @Request() req,
+    @Param('addressId', ParseIntPipe) addressId: number,
+    @Body() dto: CreateCustomerAddressDto,
+  ) {
     const userId = req.user?.id || req.user?.sub;
-    return this. service.updateAddress(userId, addressId, dto);
+    return this.service.updateAddress(userId, addressId, dto);
   }
 
   @Delete(':addressId')
   @HttpCode(HttpStatus.NO_CONTENT)
-  async remove(@Request() req, @Param('addressId', ParseIntPipe) addressId: number) {
-    const userId = req.user?. id || req.user?.sub;
+  async remove(
+    @Request() req,
+    @Param('addressId', ParseIntPipe) addressId: number,
+  ) {
+    const userId = req.user?.id || req.user?.sub;
     return this.service.removeAddress(userId, addressId);
   }
 
