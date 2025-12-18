@@ -1,5 +1,5 @@
 // ============================================
-// DTO: CRIAR ENDEREÇO DE CLIENTE
+// DTO:  CRIAR ENDEREÇO DE CLIENTE
 // ============================================
 // Define os campos obrigatórios e opcionais para cadastrar
 // um novo endereço de cliente com validações.
@@ -16,11 +16,20 @@ import {
 
 export class CreateCustomerAddressDto {
   // CEP aceito com ou sem hífen (ex.: 39400-001 ou 39400001)
+  // ACEITA TANTO "cep" QUANTO "zip_code" (compatibilidade frontend)
+  @IsOptional()
   @IsString()
   @Matches(/^\d{5}-?\d{3}$/, {
     message: 'CEP deve estar no formato 12345-678 ou 12345678',
   })
-  cep: string;
+  cep?: string;
+
+  @IsOptional()
+  @IsString()
+  @Matches(/^\d{5}-?\d{3}$/, {
+    message: 'CEP deve estar no formato 12345-678 ou 12345678',
+  })
+  zip_code?: string;
 
   // Nome da rua (mínimo 3 caracteres)
   @IsString()
