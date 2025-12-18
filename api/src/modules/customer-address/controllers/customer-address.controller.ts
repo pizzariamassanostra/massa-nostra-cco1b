@@ -71,7 +71,7 @@ export class CustomerAddressController {
   // ============================================
   // ATUALIZAR ENDEREÇO
   // ============================================
-  @Put(': addressId')
+  @Put(':addressId')
   async update(
     @Request() req,
     @Param('addressId', ParseIntPipe) addressId: number,
@@ -84,7 +84,7 @@ export class CustomerAddressController {
   // ============================================
   // DELETAR ENDEREÇO
   // ============================================
-  @Delete(': addressId')
+  @Delete(':addressId')
   @HttpCode(HttpStatus.NO_CONTENT)
   async remove(
     @Request() req,
